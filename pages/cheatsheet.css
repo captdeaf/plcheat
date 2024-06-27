@@ -27,38 +27,77 @@ body {
 }
 
 #head {
-  flex: 0 0 auto;
+  flex: 0 0 content;
   padding: 1em 1em 0em 1em;
   border-bottom: 2px solid black;
-  width: 100vw;
+  display: flex;
+  flex-flow: column;
 }
 
-#title {
-  top: 2em;
-  left: 2em;
+#topbar {
+  display: flex;
+  width: 100%;
+  flex-flow: row;
+}
+
+#topbar #title {
+  flex: 0 0 content;
   display: inline-block;
-  float: left;
-  margin-right: 2em;
-  margin-bottom: 1em;
+  margin-right: 1em;
   font-size: 150%;
   font-weight: bold;
+  height: 100%;
   color: #ff8c00;
   text-stroke: 1px #cc5900;
   -webkit-text-stroke: 1px #cc5900;
   -webkit-text-fill-color: #ff8c00;
 }
 
-#description {
+#topbar .link {
+  flex: 1 1 content;
   display: inline-block;
+  height: 100%;
+}
+
+#topbar a {
+  position: relative;
+  bottom: 0;
+  margin-right: 2em;
+  bottom: 0;
+  text-decoration: none;
+}
+
+#description {
+  flex: 1 1 content;
+  text-wrap: auto;
+  display: inline-block;
+  margin: 0.5em 0em 0.5em 0em;
 }
 
 #selections {
+  position: relative;
+  flex: 0 0 content;
+  display: block;
+  left: 0px;
+  padding-bottom: 0.5em;
+}
+
+#selections label {
+  font-weight: bold;
+  color: #cc5900;
+  display: inline-block;
+  float: left;
+  margin-right: 1vw;
+  font-size: 66%;
+}
+
+#selections label select {
   display: block;
   width: 100%;
-  padding: 1em 1em 0.5em 1em;
+  padding: 0.5em;
 }
 
 #credits {
-  flex: 0 0 auto;
+  flex: 0 0 content;
   padding: 0.2em;
 }

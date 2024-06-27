@@ -1,0 +1,32 @@
+#head {
+  padding: 0.2em;
+}
+
+.plstyle {
+  background-color: #ddd;
+  color: #ff8c00;
+}
+
+#body {
+  padding: 0.5em;
+  background-color: #fff;
+  color: #000;
+}
+
+#body.darkmode {
+  background-color: #000;
+  color: #fff;
+}
+
+#credits {
+  padding: 0.2em;
+  background-color: #ddd;
+  color: orange;
+}
+
+@media (prefers-color-scheme: dark) {
+  .plstyle {
+    background-color: #111;
+    color: #ffa500;
+  }
+}

@@ -1,0 +1,7 @@
+HTTP JavaScript
+
+inherits: js
+content-type: text/javascript
+
+This category inherits from JavaScript, but occasionally has an HTTP-ism that
+make it different from usual JS usage.

@@ -7,6 +7,7 @@
   color: #000;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
+  flex: 1 1 auto;
 }
 
 .plstyle {
@@ -15,20 +16,36 @@
 }
 
 /* Minor UI elements */
+body {
+  font-size: 160%;
+  margin: 0;
+  width: 100vw;
+  position: fixed;
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+}
+
 #head {
+  flex: 0 0 auto;
   padding: 1em 1em 0em 1em;
   border-bottom: 2px solid black;
+  width: 100vw;
 }
 
 #title {
   top: 2em;
   left: 2em;
   display: inline-block;
+  float: left;
   margin-right: 2em;
   margin-bottom: 1em;
-  font-size: 120%;
-  font-style: italic;
+  font-size: 150%;
+  font-weight: bold;
   color: #ff8c00;
+  text-stroke: 1px #cc5900;
+  -webkit-text-stroke: 1px #cc5900;
+  -webkit-text-fill-color: #ff8c00;
 }
 
 #description {
@@ -42,5 +59,6 @@
 }
 
 #credits {
+  flex: 0 0 auto;
   padding: 0.2em;
 }

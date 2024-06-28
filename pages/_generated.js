@@ -1,6 +1,6 @@
 // Auto-generated, do not edit
 const GENERATED = {
-  "buildtime": 1719547997,
+  "buildtime": 1719552788,
   "languages": {
     "bash": {
       "shortname": "bash",
@@ -103,6 +103,7 @@ const GENERATED = {
       "description": "JavaScript, often abbreviated as JS, is a programming language and core\ntechnology of the Web, alongside HTML and CSS. 99% of websites use JavaScript\non the client side for webpage behavior.\n\nWeb browsers have a dedicated JavaScript engine that executes the client code.\nThese engines are also utilized in some servers and a variety of apps. The most\npopular runtime system for non-browser usage is Node.js.",
       "snippets": {
         "programming": {
+          "arrays": "fn main() {\n    // 1. Storing Data\n    let data = vec![1, 2, 3, 4, 5];\n    println!(\"Original Data: {:?}\", data);\n\n    // 2. Mathematical Operations\n    let squared_data: Vec<i32> = data.iter().map(|&x| x * x).collect();\n    println!(\"Squared Data: {:?}\", squared_data);\n\n    // 3. Sorting and Searching\n    let mut sorted_data = data.clone();\n    sorted_data.sort();\n    println!(\"Sorted Data: {:?}\", sorted_data);\n\n    let search_value = 3;\n    if let Some(search_index) = data.iter().position(|&x| x == search_value) {\n        println!(\"Index of {}: {}\", search_value, search_index);\n    }\n\n    // 4. Data Analysis\n    let sum_value: i32 = data.iter().sum();\n    let mean_value = sum_value as f64 / data.len() as f64;\n    println!(\"Mean Value: {}\", mean_value);\n    println!(\"Sum Value: {}\", sum_value);\n\n    // 5. Multidimensional Arrays\n    let matrix: Vec<Vec<i32>> = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];\n    println!(\"Original Matrix: {:?}\", matrix);\n\n    let transposed_matrix: Vec<Vec<i32>> = (0..matrix[0].len())\n        .map(|i| matrix.iter().map(|row| row[i]).collect())\n        .collect();\n    println!(\"Transposed Matrix: {:?}\", transposed_matrix);\n\n    // Example of matrix multiplication (identity matrix)\n    let identity_matrix: Vec<Vec<i32>> = vec![vec![1, 0, 0], vec![0, 1, 0], vec![0, 0, 1]];\n    let product_matrix: Vec<Vec<i32>> = matrix\n        .iter()\n        .map(|row| {\n            row.iter()\n                .enumerate()\n                .map(|(i, &val)| val * identity_matrix[i][i])\n                .collect()\n        })\n        .collect();\n    println!(\"Matrix Product with Identity Matrix: {:?}\", product_matrix);\n\n    // Image Processing (simulated with a simple 2D array)\n    let image: Vec<Vec<f64>> = (0..5).map(|_| (0..5).map(|_| rand::random()).collect()).collect();\n    println!(\"Original Image: {:?}\", image);\n\n    // Simple operation on image\n    let brighter_image: Vec<Vec<f64>> = image\n        .iter()\n        .map(|row| row.iter().map(|&pixel| pixel * 1.2).collect())\n        .collect();\n    println!(\"Brighter Image: {:?}\", brighter_image);\n}\n\n",
           "regexps": "// JavaScript - regex_examples.js\n\n// Pattern Matching\nlet pattern = /\\d+/;  // Match one or more digits\nlet text = \"There are 123 apples\";\nconsole.log(\"Pattern Matching:\", pattern.test(text) ? \"Match found!\" : \"No match found.\");\n\n// Search and Replace\ntext = \"Hello 123, meet 456\";\nlet result = text.replace(/\\d+/g, 'number');\nconsole.log(\"Search and Replace:\", result);  // \"Hello number, meet number\"\n\n// String Splitting\ntext = \"apple, orange; banana, grape\";\nresult = text.split(/[,;]/);\nconsole.log(\"String Splitting:\", result);  // [\"apple\", \" orange\", \" banana\", \" grape\"]\n\n// Extracting Substrings\ntext = \"The date is 2024-06-27\";\npattern = /(\\d{4})-(\\d{2})-(\\d{2})/;\nlet match = text.match(pattern);\nconsole.log(\"Extracting Substrings:\", match ? match.slice(1) : \"No match found\");  // [\"2024\", \"06\", \"27\"]\n\n// Validation\nlet email = \"example@test.com\";\npattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\nconsole.log(\"Validation:\", pattern.test(email) ? \"Valid email address!\" : \"Invalid email address.\");\n\n// Removing Unwanted Characters\ntext = \"Hello, World!\";\nlet cleanedText = text.replace(/[^\\w\\s]/g, '');  // Remove all non-alphanumeric characters\nconsole.log(\"Removing Unwanted Characters:\", cleanedText);  // \"Hello World\"\n\n// Anchoring Searches\ntext = \"The quick brown fox\";\npattern = /\\bfox\\b/;  // Match 'fox' as a whole word\nconsole.log(\"Anchoring Searches:\", pattern.test(text) ? \"Found\" : \"Not Found\");\n\n// Escaping Characters\nuser_input = \"some[unsafe]input\";\nlet escaped_input = user_input.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&');\npattern = new RegExp(escaped_input);\nconsole.log(\"Escaping Characters:\", pattern);  // /some\\[unsafe\\]input/\n\n// Conditional Matching\npattern = /foo(?=bar)/;  // Match 'foo' only if followed by 'bar'\ntext = \"foobar and foo\";\nmatches = text.match(pattern);\nconsole.log(\"Conditional Matching:\", matches);  // [\"foo\"]\n\n"
         }
       }
@@ -212,28 +213,23 @@ const GENERATED = {
       "snippets": {}
     }
   },
-  "categories": {
+  "keywords": {
     "programming": {
-      "arrays": {
-        "aliases": [
-          "array",
-          "list",
-          "ordered list",
-          "vector"
-        ]
-      },
-      "regexps": {
-        "aliases": [
-          "regular expressions",
-          "pattern matching",
-          "validation",
-          "string matching",
-          "regexps",
-          "pcre",
-          "search pattern",
-          "matcher"
-        ]
-      }
+      "array": "arrays",
+      "list": "arrays",
+      "ordered list": "arrays",
+      "vector": "arrays",
+      "regular expressions": "regexps",
+      "pattern matching": "regexps",
+      "validation": "regexps",
+      "string matching": "regexps",
+      "regexps": "regexps",
+      "pcre": "regexps",
+      "search pattern": "regexps",
+      "matcher": "regexps"
     }
+  },
+  "categories": {
+    "programming": "Programming Languages"
   }
 };

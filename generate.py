@@ -22,7 +22,10 @@ import time
 # Language objects
 LANGUAGES = dict()
 
-# Categories and their involved languages. Derived.
+# Topic keywords, by category.
+KEYWORDS = dict()
+
+# Categories and their descriptions.
 CATEGORIES = dict()
 
 kvrx = re.compile(r'(\w+):\s*(.*?)\s*$')
@@ -89,14 +92,14 @@ def readLanguages():
 
 def readTopics(category, topic):
     print(f"Reading topic {topic}...")
-    CATEGORIES[category][topic] = dict()
+    KEYWORDS[category][topic] = dict()
     for snippet in glob(f"code/{category}/{topic}/*.*"):
         if 'INFO.txt' in snippet:
             with open(snippet, 'r', encoding="utf-8") as fin:
                 body = fin.read()
                 aliases = body.splitlines()
                 aliases = [x for x in aliases if len(x) > 1]
-                CATEGORIES[category][topic]['aliases'] = aliases
+                KEYWORDS[category][topic] = aliases
         elif '-' in snippet:
             _, shortname = basename(snippet).split('-', 1)
             print(f"Found a snippet for {shortname}")
@@ -108,12 +111,17 @@ def readTopics(category, topic):
 
 def readCategory(category):
     print(f"Reading category {category}")
-    if category not in CATEGORIES:
-        CATEGORIES[category] = dict()
+    if category not in KEYWORDS:
+        KEYWORDS[category] = dict()
+        CATEGORIES[category] = category
     for path in glob(f"code/{category}/*"):
+        topic = basename(path)
+        print(f"Topic: {topic}");
         if os.path.isdir(path):
-            topic = basename(path)
             readTopics(category, topic)
+        elif topic == 'INFO':
+            with open(path, 'r') as fin:
+                CATEGORIES[category] = fin.read().strip();
 
 
 def readSnippets():
@@ -124,13 +132,29 @@ def readSnippets():
             readCategory(category)
 
 
+
 def buildData():
     languages = dict()
     for shortname, language in LANGUAGES.items():
         languages[shortname] = language.todict()
+
+    # rebuild keywords, to:
+    # categoryname:
+    #   keyword: topic
+    #   keyword: topic
+    # categoryname:
+    keywords = dict()
+
+    for category, topics in KEYWORDS.items():
+        keywords[category] = dict()
+        for topic, kws in topics.items():
+            for kw in kws:
+                keywords[category][kw] = topic
+
     return dict(
       buildtime = int(time.time()),
       languages = languages,
+      keywords = keywords,
       categories = CATEGORIES,
     )
 

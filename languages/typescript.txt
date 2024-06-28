@@ -1,0 +1,3 @@
+Typescript
+ext: ts
+class: typescript

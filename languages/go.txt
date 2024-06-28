@@ -1,0 +1,3 @@
+Go (GoLang)
+ext: go
+class: golang

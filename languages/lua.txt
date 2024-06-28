@@ -1,0 +1,4 @@
+Lua
+ext: lua
+class: lua
+comment: --

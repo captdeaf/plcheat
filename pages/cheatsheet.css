@@ -136,3 +136,10 @@ a {
   font-weight: bold;
   color: #cc5900;
 }
+
+#searchbar input {
+  font-size: 90%;
+  width: 100%;
+  max-width: 40em;
+  margin-bottom: 1em;
+}

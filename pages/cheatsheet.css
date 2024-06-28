@@ -124,7 +124,15 @@ a {
   padding: 0.5em;
 }
 
-#credits {
-  flex: 0 0 content;
-  padding: 0.2em;
+#contributors {
+  padding-left: 1em;
+  background-color: #fff;
+  color: #000;
+  margin-top: 0.5em;
+  flex: 1 1 auto;
+}
+
+#contributors li a {
+  font-weight: bold;
+  color: #cc5900;
 }

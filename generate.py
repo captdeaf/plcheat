@@ -17,6 +17,7 @@ from glob import glob
 import os
 import re
 import json
+import time
 
 # Language objects
 LANGUAGES = dict()
@@ -25,6 +26,7 @@ LANGUAGES = dict()
 CATEGORIES = dict()
 
 kvrx = re.compile(r'(\w+):\s*(.*?)\s*$')
+
 
 # Brief utility stuff
 def basename(filepath):
@@ -59,7 +61,7 @@ class Language(object):
         lines = file.splitlines()
         self.displayname = lines.pop(0)
 
-        while (line := lines.pop(0)) != "":
+        while len(lines) > 0 and (line := lines.pop(0)) != "":
             m = kvrx.match(line)
             if m:
                 setattr(self, m[1], m[2])
@@ -87,16 +89,27 @@ def readLanguages():
 
 def readTopics(category, topic):
     print(f"Reading topic {topic}...")
+    CATEGORIES[category][topic] = dict()
     for snippet in glob(f"code/{category}/{topic}/*.*"):
-        shortname = basename(snippet)
-        print(f"Found a snippet for {shortname}")
-        if shortname in LANGUAGES:
+        if 'INFO.txt' in snippet:
             with open(snippet, 'r', encoding="utf-8") as fin:
                 body = fin.read()
-                LANGUAGES[shortname].addSnippet(category, topic, body)
+                aliases = body.splitlines()
+                aliases = [x for x in aliases if len(x) > 1]
+                CATEGORIES[category][topic]['aliases'] = aliases
+        elif '-' in snippet:
+            _, shortname = basename(snippet).split('-', 1)
+            print(f"Found a snippet for {shortname}")
+            if shortname in LANGUAGES:
+                with open(snippet, 'r', encoding="utf-8") as fin:
+                    body = fin.read()
+                    LANGUAGES[shortname].addSnippet(category, topic, body)
+
 
 def readCategory(category):
     print(f"Reading category {category}")
+    if category not in CATEGORIES:
+        CATEGORIES[category] = dict()
     for path in glob(f"code/{category}/*"):
         if os.path.isdir(path):
             topic = basename(path)
@@ -110,27 +123,33 @@ def readSnippets():
             category = basename(path)
             readCategory(category)
 
+
 def buildData():
     languages = dict()
     for shortname, language in LANGUAGES.items():
         languages[shortname] = language.todict()
     return dict(
-      languages = languages
+      buildtime = int(time.time()),
+      languages = languages,
+      categories = CATEGORIES,
     )
+
 
 def dumpAll(tofile):
     data = buildData()
     with open(tofile, 'w', encoding="utf-8") as fout:
         fout.write("// Auto-generated, do not edit\r\n")
         fout.write("const GENERATED = ")
-        json.dump(data, fout)
+        json.dump(data, fout, indent=2)
         fout.write(';')
+
 
 def main():
     readLanguages()
     readSnippets()
     buildData()
     dumpAll("pages/_generated.js")
+
 
 if __name__ == "__main__":
     main()

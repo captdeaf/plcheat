@@ -1,7 +1,7 @@
 Node.js JavaScript
-
+ext: js
+class: javascript
 inherits: js
-content-type: text/javascript
 
 This category inherits JavaScript, but will show Node.js-isms where it may
 differ.

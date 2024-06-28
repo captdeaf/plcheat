@@ -1,0 +1,18 @@
+Why are you reading this? Probably easier to just copy an existing language
+definition and edit that.
+
+Defining a language:
+  - File name is shortname.txt - always lowercase. ("js.txt")
+
+  - 1st line: display name
+  - 2nd-Nth lines: key: value definitions
+  - Nth: newline
+  - Rest: Description. (Currently unused?)
+
+Detail information keys:
+
+      ext: File extension.
+    class: What does highlight.js know this language as? Prefixed with "language-"
+           If not given, syntax highlighting will not work.
+ inherits: Which language (by shortname) does this inherit from? e.g: Node
+           inherits from general javascript, but shows node-isms.

@@ -1,3 +1,4 @@
 Rust
 ext: rs
-class: rust
+css: rust
+categories: programming

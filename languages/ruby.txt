@@ -1,3 +1,4 @@
 Ruby
 ext: rb
-class: ruby
+css: ruby
+categories: programming

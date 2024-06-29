@@ -1,3 +1,4 @@
 C++ (C Plus Plus, C++)
 ext: cpp
-class: cpp
+css: cpp
+categories: programming

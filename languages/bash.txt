@@ -1,3 +1,4 @@
 Bash (Shell) Script
 ext: sh
-class: bash
+css: bash
+categories: programming

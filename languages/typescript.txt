@@ -1,3 +1,4 @@
 Typescript
 ext: ts
-class: typescript
+css: typescript
+categories: programming

@@ -1,7 +1,8 @@
 HTTP JavaScript
 ext: js
 inherits: js
-class: javascript
+css: javascript
+categories: programming
 
 This category inherits from JavaScript, but occasionally has an HTTP-ism that
 make it different from usual JS usage.

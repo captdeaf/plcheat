@@ -11,11 +11,12 @@ Defining a language:
 
 Detail information keys:
 
-      ext: File extension.
-    class: What does highlight.js know this language as? Prefixed with "language-"
-           If not given, syntax highlighting will not work.
- inherits: Which language (by shortname) does this inherit from? e.g: Node
-           inherits from general javascript, but shows node-isms.
-  comment: Characters which, if they start a line, are recognized as comments,
-           which are used to create keyword searches. If not provided, the script
-	   will use both # and //.
+       ext: File extension.
+       css: What does highlight.js know this language as? Prefixed with "language-"
+            If not given, syntax highlighting will not work.
+  inherits: Which language (by shortname) does this inherit from? e.g: Node
+            inherits from general javascript, but shows node-isms.
+   comment: Characters which, if they start a line, are recognized as comments,
+            which are used to create keyword searches. If not provided, the script
+	    will use both # and //.
+categories: One or more words stating which categories this language fits in

@@ -1,3 +1,4 @@
 Powershell (Windows)
 ext: ps1
-class: powershell
+css: powershell
+categories: programming

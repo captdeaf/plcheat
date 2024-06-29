@@ -1,3 +1,4 @@
 Java
 ext: java
-class: java
+css: java
+categories: programming

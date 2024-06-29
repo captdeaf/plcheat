@@ -1,3 +1,4 @@
 Kotlin
 ext: kt
-class: kotlin
+css: kotlin
+categories: programming

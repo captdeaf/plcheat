@@ -1,4 +1,5 @@
 Lua
 ext: lua
-class: lua
+css: lua
 comment: --
+categories: programming

@@ -1,3 +1,4 @@
 Python
 ext: py
-class: python
+css: python
+categories: programming

@@ -1,3 +1,4 @@
 Go (GoLang)
 ext: go
-class: golang
+css: golang
+categories: programming

@@ -1,3 +1,4 @@
 PHP
 ext: php
-class: php
+css: php
+categories: programming

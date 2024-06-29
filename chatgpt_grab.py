@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
 
 import readline
-import openai
+from openai import OpenAI
+
 import os
 import glob
 import re
 
+api_key = None
 path = os.path.expanduser("~/.openai.key")
 with open(path, 'r') as fin:
-    openai.api_key = fin.read().strip()
+    api_key = fin.read().strip()
+
+client = OpenAI(api_key=api_key)
 
 def ask(prompt):
-    response = openai.Completion.create(
-        engine="gpt-4-turbo",
-        prompt=prompt,
-        max_tokens=4096
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[dict(
+            role="user", content=prompt)],
     )
 
-    return response['choices'][0]['text'].strip()
+    return response.choices[0].message.content.strip()
 
 def basename(filepath):
     parts = os.path.split(filepath)

@@ -1,13 +1,13 @@
 // Auto-Generated, do not edit
 const GENERATED = {
-  "buildtime": 1719885973,
-  "generatetime": 3439771646,
+  "buildtime": 1719886229,
+  "generatetime": 3439772197,
   "categories": {
     "programming": {
       "name": "programming",
       "languages": {
         "bash": {
-          "shortname": "bash",
+          "name": "bash",
           "displayname": "Bash (Shell) Script",
           "ext": "sh",
           "css": "bash",
@@ -19,7 +19,7 @@ const GENERATED = {
           }
         },
         "kotlin": {
-          "shortname": "kotlin",
+          "name": "kotlin",
           "displayname": "Kotlin",
           "ext": "kt",
           "css": "kotlin",
@@ -31,7 +31,7 @@ const GENERATED = {
           }
         },
         "dart": {
-          "shortname": "dart",
+          "name": "dart",
           "displayname": "Dart",
           "ext": "dart",
           "css": "dart",
@@ -43,7 +43,7 @@ const GENERATED = {
           }
         },
         "java": {
-          "shortname": "java",
+          "name": "java",
           "displayname": "Java",
           "ext": "java",
           "css": "java",
@@ -55,7 +55,7 @@ const GENERATED = {
           }
         },
         "powershell": {
-          "shortname": "powershell",
+          "name": "powershell",
           "displayname": "Powershell (Windows)",
           "ext": "ps1",
           "css": "powershell",
@@ -67,7 +67,7 @@ const GENERATED = {
           }
         },
         "ruby": {
-          "shortname": "ruby",
+          "name": "ruby",
           "displayname": "Ruby",
           "ext": "rb",
           "css": "ruby",
@@ -79,7 +79,7 @@ const GENERATED = {
           }
         },
         "js": {
-          "shortname": "js",
+          "name": "js",
           "displayname": "JavaScript",
           "ext": "js",
           "css": "javascript",
@@ -91,7 +91,7 @@ const GENERATED = {
           }
         },
         "httpjs": {
-          "shortname": "httpjs",
+          "name": "httpjs",
           "displayname": "HTTP JavaScript",
           "ext": "js",
           "inherits": "js",
@@ -101,7 +101,7 @@ const GENERATED = {
           "snippets": {}
         },
         "php": {
-          "shortname": "php",
+          "name": "php",
           "displayname": "PHP",
           "ext": "php",
           "css": "php",
@@ -110,7 +110,7 @@ const GENERATED = {
           "snippets": {}
         },
         "cpp": {
-          "shortname": "cpp",
+          "name": "cpp",
           "displayname": "C++ (C Plus Plus, C++)",
           "ext": "cpp",
           "css": "cpp",
@@ -122,7 +122,7 @@ const GENERATED = {
           }
         },
         "go": {
-          "shortname": "go",
+          "name": "go",
           "displayname": "Go (GoLang)",
           "ext": "go",
           "css": "golang",
@@ -134,7 +134,7 @@ const GENERATED = {
           }
         },
         "lua": {
-          "shortname": "lua",
+          "name": "lua",
           "displayname": "Lua",
           "ext": "lua",
           "css": "lua",
@@ -147,7 +147,7 @@ const GENERATED = {
           }
         },
         "typescript": {
-          "shortname": "typescript",
+          "name": "typescript",
           "displayname": "Typescript",
           "ext": "ts",
           "css": "typescript",
@@ -156,7 +156,7 @@ const GENERATED = {
           "snippets": {}
         },
         "node": {
-          "shortname": "node",
+          "name": "node",
           "displayname": "Node.js JavaScript",
           "ext": "js",
           "css": "javascript",
@@ -166,7 +166,7 @@ const GENERATED = {
           "snippets": {}
         },
         "csharp": {
-          "shortname": "csharp",
+          "name": "csharp",
           "displayname": "C# (C-Sharp)",
           "ext": "cs",
           "css": "csharp",
@@ -178,7 +178,7 @@ const GENERATED = {
           }
         },
         "rust": {
-          "shortname": "rust",
+          "name": "rust",
           "displayname": "Rust",
           "ext": "rs",
           "css": "rust",
@@ -190,7 +190,7 @@ const GENERATED = {
           }
         },
         "python": {
-          "shortname": "python",
+          "name": "python",
           "displayname": "Python",
           "ext": "py",
           "css": "python",

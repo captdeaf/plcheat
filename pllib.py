@@ -37,7 +37,7 @@ class Language(object):
     Languages have: (example)
     
     display name: "Javascript"
-    shortname: "js"
+    name: "js"
     extension: "js"
     css: "javascript" (for highlight.js)
     
@@ -48,7 +48,7 @@ class Language(object):
 
     kvrx = re.compile(r'(\w+):\s*(.*?)\s*$')
     def __init__(self, filepath):
-        self.shortname = basename(filepath)
+        self.name = basename(filepath)
 
         lines = readfile(filepath, split=True)
         self.displayname = lines.pop(0)
@@ -79,7 +79,7 @@ class Category(object):
         self.aliases = dict()
         for file in glob(f"{directory}/LANGS/*.txt"):
             language = Language(file)
-            self.languages[language.shortname] = language
+            self.languages[language.name] = language
 
         print(f"Category {directory} with {len(self.languages)} languages.")
 

@@ -90,21 +90,23 @@ function setupHeader() {
   const fromSelect = get('#langfrom');
   const toSelect = get('#langto');
 
-  buildSelect(categorySelect, GENERATED.categories);
+  const allCategories = [];
 
-  // SEARCHDATA built what we want, sorta.
-  function languagesFor(category) {
-    console.log("Selected " + category);
-    const languages = {};
-    for (const lang of Object.keys(SEARCHDATA.allComments[category])) {
-      languages[lang] = GENERATED.languages[lang].displayname;
+  // Most of our structures are {name: {name: name, displayname: displayname}, ...{
+  // Convert values into [{name: displayname}]
+  function makeSelectObject(group) {
+    const kvmap = {};
+    for (const v of Object.values(group)) {
+      kvmap[v.name] = v.displayname;
     }
-    return languages;
+    return kvmap;
   }
 
-  let selectedCategory = setSaved('selectedCategory', 'programming');
-  let selectedFrom = setSaved('selectedFrom', 'python');
-  let selectedTo = setSaved('selectedTo', 'js');
+  buildSelect(categorySelect, makeSelectObject(GENERATED.categories));
+
+  let selectedCategory = getSaved('selectedCategory', 'programming');
+  let selectedFrom = getSaved('selectedFrom', 'python');
+  let selectedTo = getSaved('selectedTo', 'js');
 
   function selectCategory(category) {
     let opt = categorySelect.querySelector('[value="' + category + '"]');
@@ -113,8 +115,9 @@ function setupHeader() {
       return;
     }
     selectedCategory = setSaved('selectedCategory', category);
-    buildSelect(fromSelect, languagesFor(category));
-    buildSelect(toSelect, languagesFor(category));
+    const languageSelect = makeSelectObject(GENERATED.categories[category].languages);
+    buildSelect(fromSelect, languageSelect);
+    buildSelect(toSelect, languageSelect);
   }
 
   function selectFrom(language) {
@@ -138,8 +141,8 @@ function setupHeader() {
   }
 
   selectCategory(selectedCategory);
-  selectFrom(selectedFrom);
-  selectTo(selectedTo);
+  // selectFrom(selectedFrom);
+  // selectTo(selectedTo);
 
   categorySelect.addEventListener('change', function() {
     const opt = categorySelect.querySelector('option:checked');
@@ -183,51 +186,6 @@ function findComments(body, pattern) {
   }
 
   return results;
-}
-
-function buildSearchStructure() {
-  // Optimizing searches. This may eventually be put into localStorage
-  SEARCHDATA.keywords = GENERATED.keywords;
-
-  // Now the BIG one, which we actually generate.
-  // allComments is a structure of:
-  //
-  // category:
-  //   language:
-  //     comment: {topic: "topic", line: linenum}
-  //
-  // e.g:
-  //
-  // programming:
-  //   javascript:
-  //     "Pattern Matching": {topic: 'regexps', line: 20}
-
-  const ac = {};
-  for (const [shortname, language] of Object.entries(GENERATED.languages)) {
-    for (const [category, topics] of Object.entries(language.snippets)) {
-      if (ac[category] === undefined) { ac[category] = {}; }
-      if (ac[category][shortname] === undefined) { ac[category][shortname] = {}; }
-      for (const [topic, body] of Object.entries(topics)) {
-        let comments = findComments(body, language.comment);
-        for (const comment of comments) {
-          ac[category][shortname][comment] = topic;
-        }
-      }
-    }
-  }
-
-  SEARCHDATA.allComments = ac;
-}
-
-function populateLanguages() {
-  // Build the collection for category->(languages)
-  let cats = {};
-  for (const [shortname, language] of Object.entries(GENERATED.languages)) {
-    for (const [category, topics] of Object.entries(language.snippets)) {
-      if (cats[category] === undefined) { cats[category] = []; }
-      cats[category].push(shortname);
-    }
-  }
 }
 
 function searchPhrase(phrase) {
@@ -275,7 +233,5 @@ function searchPhrase(phrase) {
 }
 
 function getStarted() {
-  populateLanguages();
-  buildSearchStructure();
   setupHeader();
 }

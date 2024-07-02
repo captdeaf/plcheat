@@ -1,4 +1,4 @@
-regular expressions
+Regular Expressions
 pattern matching
 validation
 string matching

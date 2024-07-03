@@ -77,6 +77,8 @@ class Category(object):
         self.name = basename(directory)
         self.languages = dict()
         self.aliases = dict()
+        self.topics = dict()
+
         for file in glob(f"{directory}/LANGS/*.txt"):
             language = Language(file)
             self.languages[language.name] = language
@@ -102,6 +104,8 @@ class Category(object):
             displayname = lines[0]
             for line in lines:
                 self.aliases[' '.join(line.lower().split())] = topic
+
+        self.topics[topic] = displayname
 
         if snippets:
             # Now read in all examples and store in their Language object.

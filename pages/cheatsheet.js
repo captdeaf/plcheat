@@ -55,8 +55,8 @@ function setupDescription() {
     localStorage.setItem(statekey, 'open');
   }
 
-  close.addEventListener('click', closeDescription);
-  open.addEventListener('click', openDescription);
+  close.onclick = closeDescription;
+  open.onclick = openDescription;
 
   if (state === 'closed') {
     closeDescription();
@@ -83,12 +83,48 @@ function buildSelect(element, options) {
   }
 }
 
-function setupHeader() {
+function rehighlight() {
+  hljs.highlightAll();
+}
+
+function matchScroll(from, to) {
+
+  const frombox = from.getBoundingClientRect();
+
+  const lookatY = frombox.top + frombox.height / 2;
+  const lookatX = frombox.left + 40;
+
+  let lookingAt = document.elementFromPoint(lookatX, lookatY);
+
+  let count = 0;
+
+  while (!lookingAt.tagName !== 'SPAN') {
+    count = count + 1;
+    let tmp = document.elementFromPoint(lookatX, lookatY - (count * 5));
+    if (tmp === null) {
+      // TODO: Match code tag, I guess.
+      return;
+    }
+    lookingAt = tmp;
+  }
+
+  console.log(lookingAt.tagName);
+
+  // Let's not get into an endless loop.
+  const tmp = to.onscroll;
+  to.onscroll = undefined;
+
+  to.onscroll = tmp;
+}
+
+function setupSheet() {
   setupDescription();
 
   const categorySelect = get('#category');
   const fromSelect = get('#langfrom');
   const toSelect = get('#langto');
+  const sheetLeft = get('#sheetleft');
+  const sheetRight = get('#sheetright');
 
   const allCategories = [];
 
@@ -128,6 +164,8 @@ function setupHeader() {
     }
     opt.selected = true;
     selectedFrom = setSaved('selectedFrom', language);
+    sheetLeft.innerHTML = GENERATED.categories[selectedCategory].languages[selectedFrom].snippets;
+    rehighlight();
   }
 
   function selectTo(language) {
@@ -138,26 +176,35 @@ function setupHeader() {
     }
     opt.selected = true;
     selectedTo = setSaved('selectedTo', language);
+    sheetRight.innerHTML = GENERATED.categories[selectedCategory].languages[selectedTo].snippets;
+    rehighlight();
   }
 
   selectCategory(selectedCategory);
-  // selectFrom(selectedFrom);
-  // selectTo(selectedTo);
+  selectFrom(selectedFrom);
+  selectTo(selectedTo);
 
-  categorySelect.addEventListener('change', function() {
+  categorySelect.onchange = function() {
     const opt = categorySelect.querySelector('option:checked');
     selectCategory(opt.value);
-  });
+  };
 
-  fromSelect.addEventListener('change', function() {
+  fromSelect.onchange = function() {
     const opt = fromSelect.querySelector('option:checked');
     selectFrom(opt.value);
-  });
+  };
 
-  toSelect.addEventListener('change', function() {
+  toSelect.onchange = function() {
     const opt = toSelect.querySelector('option:checked');
     selectTo(opt.value);
-  });
+  };
+
+  sheetRight.onscroll = function() {
+    matchScroll(sheetRight, sheetLeft)
+  };
+  sheetLeft.onscroll = function() {
+    matchScroll(sheetLeft, sheetRight);
+  };
 }
 
 // or IDB?
@@ -233,5 +280,5 @@ function searchPhrase(phrase) {
 }
 
 function getStarted() {
-  setupHeader();
+  setupSheet();
 }

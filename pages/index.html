@@ -13,7 +13,8 @@
     <!-- PLCheat style and script. -->
     <link rel="stylesheet" type="text/css" href="cheatsheet.css" />
     <script type="text/javascript" src="_generated.js"></script>
-    <script type="text/javascript" src="cheatsheet.js"></script>
+    <script type="text/javascript" src="plui.js"></script>
+    <script type="text/javascript" src="plcheat.js"></script>
   </head>
   <body>
     <div id="head" class="plstyle">
@@ -61,7 +62,10 @@
       <div id="sheetright"></div>
     </div>
     <script type="text/javascript">
-      (function() {getStarted();})();
+      (function() {
+        buildIndex();
+        setupUI();
+      })();
     </script>
   </body>
 </html>

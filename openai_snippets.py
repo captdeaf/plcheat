@@ -3,8 +3,12 @@
 import readline
 from openai import OpenAI
 import os
+import sys
 from glob import glob
 import re
+
+sys.path.append('')
+from pllib import read_categories
 
 def basename(filepath):
     parts = os.path.split(filepath)
@@ -16,69 +20,11 @@ def basename(filepath):
     return basename
 
 
-kvrx = re.compile(r'(\w+):\s*(.*?)\s*$')
-
 DEFAULT_LANGUAGE = 'python'
-
-
-# Languages have:
-#
-# display name: "Javascript"
-# shortname: "js"
-# extension: "js"
-# class: "javascript" (for highlight.js)
-#
-# snippets:
-#   categoryname1:
-#     topicname1: (body of file)
-#   categoryname2:
-#     topicname2: (body of file)
-class Language(object):
-    def __init__(self, filepath):
-        self.shortname = basename(filepath)
-
-        self.ext = ""
-        self.categories = ""
-        self.css = ''
-
-        with open(filepath, 'r', encoding="utf-8") as fin:
-            file = fin.read()
-
-        lines = file.splitlines()
-        self.displayname = lines.pop(0)
-
-        while len(lines) > 0 and (line := lines.pop(0)) != "":
-            m = kvrx.match(line)
-            if m:
-                setattr(self, m[1], m[2])
-
-        self.description = "\n".join(lines)
-
-        # snippets: a dict of (category: dict(topic: <file>))
-        self.snippets = dict()
-
-    def addSnippet(self, category, topic, body):
-        if category not in self.snippets:
-            self.snippets[category] = dict()
-
-        self.snippets[category][topic] = body
-
-    def todict(self):
-        return self.__dict__
-
-
-def readLanguages():
-    languages = dict()
-    for filepath in glob("languages/*.txt"):
-        if 'INFO' not in filepath:
-            lang = Language(filepath)
-            languages[lang.shortname] = lang
-
-    return languages
 
 TOPIC_QUESTION = "Generate a {default} script that demonstrates common examples of {request}. Respond with only the code."
 
-CONVERT_QUESTION = "Convert this {default} script to {target}, demonstrating the same features if you can, and keeping the same comments. Respond with only the code."
+CONVERT_QUESTION = "Convert this {default} script to {target}, demonstrating the same features if you can, and keeping the same comments. Respond with only the code. Code is: {code}"
 
 api_key = None
 path = os.path.expanduser("~/.openai.key")
@@ -87,20 +33,12 @@ with open(path, 'r') as fin:
 
 client = OpenAI(api_key=api_key)
 
-LANGUAGES = readLanguages()
-
-CATEGORY_LANGUAGES = dict()
-
-for language in LANGUAGES.values():
-    for category in language.categories.strip().split():
-        if category not in CATEGORY_LANGUAGES:
-            CATEGORY_LANGUAGES[category] = []
-        CATEGORY_LANGUAGES[category].append(language)
+CATEGORIES = read_categories()
 
 def request(prompt):
-    return "This is an example of code blah blah"
+    # return "This is an example of code blah blah"
     response = client.chat.completions.create(
-        model="gpt-4.0-turbo",
+        model="gpt-3.5-turbo",
         messages=[dict(role='user', content=prompt)],
     )
 
@@ -177,9 +115,9 @@ Help:
 """
 
 
-def printLanguages():
+def print_languages():
     out = []
-    for category, languages in CATEGORY_LANGUAGES.items():
+    for category, languages in CATEGORIES.items():
         out.append(category + ":")
         names = [l.shortname for l in languages]
         for name in names:
@@ -187,7 +125,7 @@ def printLanguages():
     qprint("\n".join(out))
 
 
-def getLanguage(pick):
+def get_language(pick):
     for lang in LANGUAGES.values():
         if lang.shortname.startswith(pick):
             return lang
@@ -196,11 +134,11 @@ def getLanguage(pick):
     return None
 
 
-def getLanguages(lpicks):
+def get_languages(lpicks):
     picks = lpicks.strip().split()
     langs = {}
     for pick in picks:
-        lang = getLanguage(pick)
+        lang = get_language(pick)
         if lang is None:
             return None
         langs[lang.shortname] = lang
@@ -221,7 +159,7 @@ def review(language):
         qprint("\n".join(out))
         return
 
-    lang = getLanguage(language)
+    lang = get_language(language)
     if not lang: return
     if lang.shortname not in CACHED:
         qprint(f"Code not generated for language {lang.shortname}.")
@@ -230,13 +168,22 @@ def review(language):
 
 
 def convert(languages):
-    langs = []
-    if languages == 'all':
-        langs = LANGUAGES
-    elif len(languages) > 0:
-        langs = getLanguages(languages)
+    langs = [x.strip() for x in languages.strip().split(' ')]
+    # if languages == 'all':
+        # langs = LANGUAGES
+    # elif len(languages) > 0:
+        # langs = get_languages(languages)
 
     # TODO: I was here
+    for lang in langs:
+        CACHED[lang] = request(
+            CONVERT_QUESTION.format(
+                default=DEFAULT_LANGUAGE,
+                target=lang,
+                code=CACHED[DEFAULT_LANGUAGE]
+            )
+        )
+        qprint('<<<< ' + lang + ' generated code', CACHED[lang])
 
 
 def main():
@@ -246,7 +193,8 @@ def main():
     last = []
 
     try:
-        while (line := input("> ")) is not None:
+        keepgoing = True
+        while keepgoing and ((line := input("> ")) is not None):
             cmd, rest = line, ""
             if ' ' in line:
                 cmd, rest = cmd.split(" ", 1)
@@ -260,7 +208,7 @@ def main():
                     qprint("Cache cleared")
                 else:
                     out = []
-                    langs = getLanguages(rest)
+                    langs = get_languages(rest)
                     for lang in langs:
                         if lang.shortname in CACHED:
                             CACHED.pop(lang.shortname)
@@ -278,10 +226,13 @@ def main():
                 CACHED[DEFAULT_LANGUAGE] = request(request=rest)
                 qprint('<<<< ' + DEFAULT_LANGUAGE + ' generated code', CACHED[DEFAULT_LANGUAGE])
             elif cmd == 'default':
-                pick = getLanguage(rest)
-                if pick is not None:
-                    DEFAULT_LANGUAGE = pick.shortname
-                    qprint(f"New default language: {DEFAULT_LANGUAGE}")
+                DEFAULT_LANGUAGE = rest
+                # pick = get_language(rest)
+                # if pick is not None:
+                    # DEFAULT_LANGUAGE = pick.shortname
+                    # qprint(f"New default language: {DEFAULT_LANGUAGE}")
+            elif cmd == 'topic':
+                cat, topic = rest.split('/')
             elif cmd == 'review':
                 review(rest)
             elif cmd == 'convert':
@@ -296,7 +247,9 @@ def main():
             elif cmd == 'example':
                 qprint(EXAMPLE)
             elif cmd == 'languages':
-                printLanguages()
+                print_languages()
+            elif cmd in ['exit', 'stop', 'quit']:
+                keep_going = False
             else:
                 qprint("Unknown command - try 'help' ")
     except EOFError:

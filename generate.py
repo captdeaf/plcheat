@@ -26,11 +26,19 @@ from pllib import read_categories
 
 class Encoder(json.JSONEncoder):
     def default(self, o):
-        return o.__dict__
+        ret = dict()
+        ret.update(o.__dict__)
+        for ign in getattr(o, "dict_ignore", []):
+            if ign in ret:
+                ret.pop(ign)
+        return ret
+
 
 
 def build_data():
     categories = read_categories(True)
+    for category in categories.values():
+        category.convert_html()
 
     data = dict(
         buildtime = int(time.time()),
@@ -41,35 +49,8 @@ def build_data():
     return data
 
 
-def build_snip(category, language, snip):
-    topic, code = snip
-    return """
-<a tag="{topic}">
-<h5>{displayname}</h5><pre><code class="language-{css}">
-{codehtml}
-</code></pre>
-</a>
-""".format(
-        topic=topic,
-        displayname=category.topics[topic],
-        css=language.css,
-        codehtml=html.escape(code),
-    )
-
-
-def convert_html(data):
-    sep = "\n\n---------------------\n\n"
-
-    for category in data['categories'].values():
-        for language in category.languages.values():
-            snips = list(sorted(language.snippets.items(), key= lambda x: x[0]))
-            # Override snippets.
-            language.snippets = sep.join([build_snip(category, language, snip) for snip in snips])
-
-
 def main():
     data = build_data()
-    convert_html(data)
     with open('pages/_generated.js', 'w', encoding='utf-8') as fout:
         fout.write("// Auto-Generated, do not edit\r\n")
         fout.write("const GENERATED = ")

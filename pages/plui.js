@@ -1,4 +1,4 @@
-// cheatsheet.js
+// plui.js
 //
 // UI management for plcheat, a programming language cheat sheet website.
 //
@@ -7,6 +7,14 @@
 // Programming (default): C, Bash, python, rust, etc.
 //
 // Database: pgsql, sql, etc.
+//
+// Called from plui:
+//   get(selector), getAll(selector)
+//   getSaved(name, default), setSaved(name, value)
+//
+// Used from plcheat:
+//   setRenderPanes(elements)
+//   renderLanguageTo(element, selectedCategory, language)
 
 function getAll(identifier) {
   return document.querySelectorAll(identifier);
@@ -83,41 +91,7 @@ function buildSelect(element, options) {
   }
 }
 
-function rehighlight() {
-  hljs.highlightAll();
-}
-
-function matchScroll(from, to) {
-
-  const frombox = from.getBoundingClientRect();
-
-  const lookatY = frombox.top + frombox.height / 2;
-  const lookatX = frombox.left + 40;
-
-  let lookingAt = document.elementFromPoint(lookatX, lookatY);
-
-  let count = 0;
-
-  while (!lookingAt.tagName !== 'SPAN') {
-    count = count + 1;
-    let tmp = document.elementFromPoint(lookatX, lookatY - (count * 5));
-    if (tmp === null) {
-      // TODO: Match code tag, I guess.
-      return;
-    }
-    lookingAt = tmp;
-  }
-
-  console.log(lookingAt.tagName);
-
-  // Let's not get into an endless loop.
-  const tmp = to.onscroll;
-  to.onscroll = undefined;
-
-  to.onscroll = tmp;
-}
-
-function setupSheet() {
+function setupUI() {
   setupDescription();
 
   const categorySelect = get('#category');
@@ -164,8 +138,7 @@ function setupSheet() {
     }
     opt.selected = true;
     selectedFrom = setSaved('selectedFrom', language);
-    sheetLeft.innerHTML = GENERATED.categories[selectedCategory].languages[selectedFrom].snippets;
-    rehighlight();
+    renderLanguageTo(sheetLeft, selectedCategory, selectedFrom);
   }
 
   function selectTo(language) {
@@ -176,8 +149,7 @@ function setupSheet() {
     }
     opt.selected = true;
     selectedTo = setSaved('selectedTo', language);
-    sheetRight.innerHTML = GENERATED.categories[selectedCategory].languages[selectedTo].snippets;
-    rehighlight();
+    renderLanguageTo(sheetRight, selectedCategory, selectedTo);
   }
 
   selectCategory(selectedCategory);
@@ -199,86 +171,5 @@ function setupSheet() {
     selectTo(opt.value);
   };
 
-  sheetRight.onscroll = function() {
-    matchScroll(sheetRight, sheetLeft)
-  };
-  sheetLeft.onscroll = function() {
-    matchScroll(sheetLeft, sheetRight);
-  };
-}
-
-// or IDB?
-const SEARCHDATA = {};
-
-const COMMENTSCANS = {
-  default: new RegExp('^\s*(#|//)\s*(.*)\s*$'),
-};
-
-function findComments(body, pattern) {
-  if (pattern === undefined) { pattern = 'default'; }
-  let rx = COMMENTSCANS[pattern];
-  if (rx === undefined) {
-    rx = new RegExp('^\s*(' + pattern + ') (.*)');
-    COMMENTSCANS[pattern] = rx;
-  }
-
-  const results = [];
-
-  const lines = body.split("\n");
-  for (const line of lines) {
-    const match = line.match(rx);
-    if (match) {
-      results.push(match[2]);
-    }
-  }
-
-  return results;
-}
-
-function searchPhrase(phrase) {
-  // Normalize the phrase to lowercase for case-insensitive comparison
-  const normalizedPhrase = phrase.toLowerCase();
-  const matchingContents = [];
-
-  // Iterate over keyword mappings
-  for (const mapping of keywordMappings) {
-    // Check if any of the keywords are included in the phrase
-    if (mapping.keywords.some(keyword => normalizedPhrase.includes(keyword))) {
-      // Get the target associated with the mapping
-      const target = mapping.target;
-
-      // Get the file contents associated with the target
-      const targetContents = fileContents[target];
-
-      // If no file contents are found for the target, continue to the next mapping
-      if (!targetContents) {
-        continue;
-      }
-
-      // Filter the file contents to include only those that contain the phrase
-      const filteredContents = targetContents.filter(content =>
-        content.toLowerCase().includes(normalizedPhrase)
-      );
-
-      // Add the filtered contents to the matching contents array
-      matchingContents.push(...filteredContents);
-    }
-  }
-
-  // If no contents are found from keyword mapping, search all file contents
-  if (matchingContents.length === 0) {
-    for (const target in fileContents) {
-      const targetContents = fileContents[target];
-      const filteredContents = targetContents.filter(content =>
-        content.toLowerCase().includes(normalizedPhrase)
-      );
-      matchingContents.push(...filteredContents);
-    }
-  }
-
-  return matchingContents;
-}
-
-function getStarted() {
-  setupSheet();
+  setRenderPanes([sheetRight, sheetLeft]);
 }

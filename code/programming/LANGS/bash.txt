@@ -2,3 +2,4 @@ Bash (Shell) Script
 ext: sh
 css: bash
 categories: programming
+ignore: bin/bash

@@ -2,6 +2,7 @@
 #
 # Utilities for plcheat.
 
+import html
 from glob import glob
 import os
 import re
@@ -52,6 +53,7 @@ class Language(object):
 
         lines = readfile(filepath, split=True)
         self.displayname = lines.pop(0)
+        self.comment = '#|//'
 
         while len(lines) > 0 and (line := lines.pop(0)) != "":
             m = self.kvrx.match(line)
@@ -59,16 +61,61 @@ class Language(object):
                 setattr(self, m[1], m[2])
 
         self.description = "\n".join(lines)
+        self.commentre = re.compile(f"^\\s*(?:{self.comment})\\s+(.*)$")
 
         # snippets: a dict of (category: dict(topic: <file>))
         self.snippets = dict()
+
+    def normalize(self, words):
+        words = re.sub(f"\\.{self.ext}", "", words)
+        return [re.sub(r'[^a-z]+', '', word.lower().strip()) for word in words.split()]
+
 
     def add_snippet(self, topic, path):
         with open(path, 'r', encoding="utf-8") as fin:
             self.snippets[topic] = fin.read()
 
-    def todict(self):
-        return self.__dict__
+    def populate_tags(self, category, htmlcode):
+        """
+        1) Convert all comments to <a tag="{self.name}-...">
+        2) Create a dictionary of {comment words: anchor tag}
+        """
+
+        tags = dict()
+
+        ret = []
+
+        for line in htmlcode.splitlines():
+            m = self.commentre.search(line)
+            if m:
+                normalized = self.normalize(m[1])
+                normalized_tagname = "-".join(normalized)
+                tagname = f"{self.name}-{normalized_tagname}"
+                tags[tagname] = True
+                ret.append(f'<a tag="{tagname}">{line}</a>')
+            else:
+                ret.append(line)
+
+        self.tags = list(tags.keys())
+
+        return "\n".join(ret)
+
+
+    def build_snip(self, category, snip):
+        topic, code = snip
+        code = html.escape(code)
+        # code = self.populate_tags(category, code)
+        return code
+
+    def convert_html(self, category):
+        snips = list(sorted(self.snippets.items(), key= lambda x: x[0]))
+        # Override snippets.
+        self.snippets = dict()
+        for (topic, code) in snips:
+            code = html.escape(code)
+            self.snippets[topic] = code
+
+    dict_ignore = ['commentre', 'description']
 
 
 class Category(object):
@@ -115,6 +162,10 @@ class Category(object):
                     continue
                 _, lang = topiclang.split('-', 1)
                 self.languages[lang].add_snippet(topic, file)
+
+    def convert_html(self):
+        for language in self.languages.values():
+            language.convert_html(self)
 
 
 def read_categories(snippets=False):

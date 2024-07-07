@@ -47,17 +47,111 @@ function appendSnippet(element, css, topic, displaytopic, snippet) {
   element.appendChild(document.createElement("hr"));
 }
 
-var RENDER_PANES = [];
+const OBSERVED = {};
+
+function normalize(str) {
+  str = str.replaceAll(/[^a-zA-Z]+/g, ' ').toLowerCase();
+  str = str.replaceAll(/\s+/g, ' ').replace(/^\s+/, '').replace(/\s+$/, '');
+  return str.split(/\s+/)
+}
+
+function bestMatch(wanted, comments) {
+  const wants = {};
+  for (const word of normalize(wanted.innerText)) {
+    wants[word] = true;
+  }
+
+  bestscore = 0;
+  bestfit = comments[0];
+
+  for (const comment of comments) {
+    let score = 0;
+    for (const word of normalize(comment.innerText)) {
+      if (wants[word]) {
+        score += 1;
+      }
+    }
+    if (score > bestscore) {
+      bestscore = score;
+      bestfit = comment;
+    }
+  }
+  return bestfit;
+}
+
+function scrollToComment(wanted, pane) {
+  const comments = pane.querySelectorAll(".hljs-comment");
+  const best = bestMatch(wanted, comments);
+
+  // Tricky part - scrolling math.
+  let panetop = pane.getBoundingClientRect().top;
+  let panescroll = pane.scrollTop;
+  let commenttop = best.getBoundingClientRect().top;
+
+  pane.scrollTop = commenttop - panetop + panescroll;
+}
+
+function matchScrolling(pane, events, context) {
+  // So we don't trigger infinite recursion.
+  // So we don't trigger infinite recursion.
+  // So we don't trigger infinite recursion.
+  const now = new Date().getTime();
+
+  if (context.activeUntil > now) {
+    if (pane.id !== context.activePane) {
+      return;
+    }
+  }
+  context.activePane = pane.id;
+  context.activeUntil = now + 5000;
+
+  foo = events;
+
+  console.log("Pane " + pane.id + " wants others to match scrolling with " + events.length + " items.");
+  const wanted = events[0].target;
+
+  for (const element of context.panes) {
+    if (element.id !== pane.id) {
+      scrollToComment(wanted, element);
+    }
+  }
+}
+
+function watchScrolling(pane, context) {
+  pane.observer = new IntersectionObserver(function(events) {
+    matchScrolling(pane, events, context);
+  }, {
+    root: pane,
+    threshold: 1.0,
+    rootMargin: "20px 0px 20px 0px",
+  });
+  pane.observing = [];
+}
 
 function setRenderPanes(panes) {
-  RENDER_PANES = panes;
+  const context = {
+    activePane: null,
+    activeUntil: 0,
+    panes: panes,
+  };
+  for (pane of panes) {
+    watchScrolling(pane, context);
+  }
 }
 
 function renderLanguageTo(element, category, language) {
+  console.log("Rendering to " + element.id);
+  for (const watched of element.observing) {
+    element.observer.unobsrve(watched);
+  }
   element.innerHTML = BUILT.snippets[category][language].innerHTML;
+  for (const watch of element.querySelectorAll(".hljs-comment")) {
+    element.observer.observe(watch);
+  }
 }
 
-function tagDiv(language, renderDiv) {
+function tagComments(language, renderDiv) {
+  const allComments = renderDiv.querySelectorAll('.hljs-comment');
 }
 
 function buildIndex() {
@@ -77,7 +171,7 @@ function buildIndex() {
           appendSnippet(renderDiv, language.css, topic, displaytopics[topic], language.snippets[topic]);
         }
       }
-      tagDiv(renderDiv);
+      tagComments(language, renderDiv);
       languages[language.name] = renderDiv;
     }
     categories[category.name] = languages;

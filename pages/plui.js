@@ -100,6 +100,8 @@ function setupUI() {
   const sheetLeft = get('#sheetleft');
   const sheetRight = get('#sheetright');
 
+  setRenderPanes([sheetRight, sheetLeft]);
+
   const allCategories = [];
 
   // Most of our structures are {name: {name: name, displayname: displayname}, ...{
@@ -170,6 +172,4 @@ function setupUI() {
     const opt = toSelect.querySelector('option:checked');
     selectTo(opt.value);
   };
-
-  setRenderPanes([sheetRight, sheetLeft]);
 }

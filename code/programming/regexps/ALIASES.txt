@@ -1,8 +1,4 @@
-Regular Expressions
-pattern matching
 validation
-string matching
 regexps
 pcre
-search pattern
 matcher

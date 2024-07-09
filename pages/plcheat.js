@@ -53,54 +53,63 @@ function appendSnippet(element, css, topic, displaytopic, snippet) {
   element.appendChild(document.createElement("hr"));
 }
 
-const OBSERVED = {};
-
 function normalize(str) {
   str = str.replaceAll(/[^a-zA-Z]+/g, ' ').toLowerCase();
   str = str.replaceAll(/\s+/g, ' ').replace(/^\s+/, '').replace(/\s+$/, '');
   return str.split(/\s+/)
 }
 
-function bestMatch(wanted, comments) {
-  const wants = {};
-  for (const word of normalize(wanted.innerText)) {
-    wants[word] = true;
+function bestMatch(visibles, targets) {
+  const best = {
+    score: 0,
+    rest: 1000,
+    target: visibles[0],
   }
 
-  let bestscore = 0;
-  let bestrest = 1000;
-  let bestfit = comments[0];
+  console.log(visibles);
+ 
+  for (const visible of visibles) {
+    const wants = {};
+    for (const word of normalize(visible.innerText)) {
+      wants[word] = true;
+    }
 
-  for (const comment of comments) {
-    let score = 0;
-    let rest = 0;
-    for (const word of normalize(comment.innerText)) {
-      if (wants[word]) {
-        score += 1;
-      } else {
-        rest += 1;
+    for (const target of targets) {
+      let score = 0;
+      let rest = 0;
+      let targetWants = Object.assign({}, wants);
+      for (const word of normalize(target.innerText)) {
+        if (targetWants[word]) {
+          score += 1;
+        } else {
+          rest += 1;
+        }
+      }
+      rest += Object.keys(targetWants).length;
+      // if (score > 0) {
+        // console.log("Comparing " + target.innerText + " vs " + wanted.innerText + ": " + score + " - " + rest);
+      // }
+      if ((score > best.score && rest <= best.rest) || (score >= best.score && rest < best.rest)) {
+        best.score = score;
+        best.fit = target;
+        best.rest = rest;
       }
     }
-    // if (score > 0) {
-      // console.log("Comparing " + comment.innerText + " vs " + wanted.innerText + ": " + score + " - " + rest);
-    // }
-    if ((score > bestscore && rest <= bestrest) || (score >= bestscore && rest < bestrest)) {
-      bestscore = score;
-      bestfit = comment;
-      bestrest = rest;
+    if (best.score >= 2 || best.rest < 1) {
+      return best.fit;
     }
   }
-  console.log("Winner: " + bestfit.innerText + " vs " + wanted.innerText + ": " + bestscore + " - " + bestrest);
-  return bestfit;
+  // console.log("Winner of " + visibles.length + ": " + best.fit.innerText + " vs " + wanted.innerText + ": " + best.score + " - " + best.rest);
+  return best.fit;
 }
 
-function scrollToItem(wanted, pane) {
-  const items = pane.querySelectorAll(".hljs-comment,h3");
-  const best = bestMatch(wanted, items);
+function scrollToVisible(targetPane, visibles) {
+  const items = targetPane.querySelectorAll(".hljs-comment,h3");
+  const best = bestMatch(visibles, items);
 
   // Tricky part - scrolling math.
-  let panetop = pane.getBoundingClientRect().top;
-  let panescroll = pane.scrollTop;
+  let panetop = targetPane.getBoundingClientRect().top;
+  let panescroll = targetPane.scrollTop;
   let besttop = best.getBoundingClientRect().top;
 
   let targetTop = besttop - panetop + panescroll;
@@ -108,10 +117,10 @@ function scrollToItem(wanted, pane) {
   if (targetTop < 100) {
     targetTop = 0;
   }
-  pane.scrollTop = targetTop;
+  targetPane.scrollTop = targetTop;
 }
 
-function matchScrolling(pane, events, context) {
+function matchScrolling(pane, visibles, context) {
   // So we don't trigger infinite recursion.
   // So we don't trigger infinite recursion.
   // So we don't trigger infinite recursion.
@@ -125,26 +134,38 @@ function matchScrolling(pane, events, context) {
   context.activePane = pane.id;
   context.activeUntil = now + 1000;
 
-  foo = events;
-
-  const wanted = events[0].target;
-
   for (const element of context.panes) {
     if (element.id !== pane.id) {
-      scrollToItem(wanted, element);
+      scrollToVisible(element, visibles);
     }
   }
 }
 
 function watchScrolling(pane, context) {
+  pane.visibles = [];
+  pane.observing = [];
   pane.observer = new IntersectionObserver(function(events) {
-    matchScrolling(pane, events, context);
+    for (const evt of events) {
+      if (evt.isIntersecting) {
+        pane.visibles.push(evt.target);
+      } else {
+        const idx = pane.visibles.indexOf(evt.target);
+        if (idx >= 0) {
+          pane.visibles.splice(idx, 1);
+        }
+      }
+
+      pane.visibles.sort(function(a, b) {
+        return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
+      });
+    }
+    // console.log("Observed " + events.length + " events, " + pane.visibles.length + " visibles");
+    matchScrolling(pane, pane.visibles, context);
   }, {
     root: pane,
     threshold: 1.0,
     rootMargin: "20px 0px 20px 0px",
   });
-  pane.observing = [];
 }
 
 function setRenderPanes(panes) {
@@ -153,6 +174,7 @@ function setRenderPanes(panes) {
     activePane: null,
     activeUntil: now + 1000,
     panes: panes,
+    initializing: true,
   };
   for (pane of panes) {
     watchScrolling(pane, context);
@@ -161,11 +183,12 @@ function setRenderPanes(panes) {
 
 function renderLanguageTo(element, category, language) {
   for (const watched of element.observing) {
-    element.observer.unobsrve(watched);
+    element.observer.unobserve(watched);
   }
   element.innerHTML = BUILT.snippets[category][language].innerHTML;
   for (const watch of element.querySelectorAll(".hljs-comment,h3")) {
     element.observer.observe(watch);
+    element.observing.push(watch);
   }
 }
 
@@ -191,48 +214,4 @@ function buildIndex() {
     categories[category.name] = languages;
   }
   BUILT.snippets = categories;
-}
-
-function searchPhrase(phrase) {
-  // Normalize the phrase to lowercase for case-insensitive comparison
-  const normalizedPhrase = phrase.toLowerCase();
-  const matchingContents = [];
-
-  // Iterate over keyword mappings
-  for (const mapping of keywordMappings) {
-    // Check if any of the keywords are included in the phrase
-    if (mapping.keywords.some(keyword => normalizedPhrase.includes(keyword))) {
-      // Get the target associated with the mapping
-      const target = mapping.target;
-
-      // Get the file contents associated with the target
-      const targetContents = fileContents[target];
-
-      // If no file contents are found for the target, continue to the next mapping
-      if (!targetContents) {
-        continue;
-      }
-
-      // Filter the file contents to include only those that contain the phrase
-      const filteredContents = targetContents.filter(content =>
-        content.toLowerCase().includes(normalizedPhrase)
-      );
-
-      // Add the filtered contents to the matching contents array
-      matchingContents.push(...filteredContents);
-    }
-  }
-
-  // If no contents are found from keyword mapping, search all file contents
-  if (matchingContents.length === 0) {
-    for (const target in fileContents) {
-      const targetContents = fileContents[target];
-      const filteredContents = targetContents.filter(content =>
-        content.toLowerCase().includes(normalizedPhrase)
-      );
-      matchingContents.push(...filteredContents);
-    }
-  }
-
-  return matchingContents;
 }

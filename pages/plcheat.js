@@ -13,6 +13,12 @@
 //   setRenderPanes(elements)
 //   renderLanguageTo(element, selectedCategory, language)
 
+// SCROLL_DELAY: To prevent infinite recursion between the two panes,
+//               how long do we lock a pane for?
+const SCROLL_DELAY = 1000;
+
+// Completed index - probably want to eventually save this to local
+// storage when our json object gets BIG.
 const BUILT = {};
 
 function getSortedTopics(category) {
@@ -61,34 +67,48 @@ function bestMatch(wanted, comments) {
     wants[word] = true;
   }
 
-  bestscore = 0;
-  bestfit = comments[0];
+  let bestscore = 0;
+  let bestrest = 1000;
+  let bestfit = comments[0];
 
   for (const comment of comments) {
     let score = 0;
+    let rest = 0;
     for (const word of normalize(comment.innerText)) {
       if (wants[word]) {
         score += 1;
+      } else {
+        rest += 1;
       }
     }
-    if (score > bestscore) {
+    // if (score > 0) {
+      // console.log("Comparing " + comment.innerText + " vs " + wanted.innerText + ": " + score + " - " + rest);
+    // }
+    if ((score > bestscore && rest <= bestrest) || (score >= bestscore && rest < bestrest)) {
       bestscore = score;
       bestfit = comment;
+      bestrest = rest;
     }
   }
+  console.log("Winner: " + bestfit.innerText + " vs " + wanted.innerText + ": " + bestscore + " - " + bestrest);
   return bestfit;
 }
 
-function scrollToComment(wanted, pane) {
-  const comments = pane.querySelectorAll(".hljs-comment");
-  const best = bestMatch(wanted, comments);
+function scrollToItem(wanted, pane) {
+  const items = pane.querySelectorAll(".hljs-comment,h3");
+  const best = bestMatch(wanted, items);
 
   // Tricky part - scrolling math.
   let panetop = pane.getBoundingClientRect().top;
   let panescroll = pane.scrollTop;
-  let commenttop = best.getBoundingClientRect().top;
+  let besttop = best.getBoundingClientRect().top;
 
-  pane.scrollTop = commenttop - panetop + panescroll;
+  let targetTop = besttop - panetop + panescroll;
+
+  if (targetTop < 100) {
+    targetTop = 0;
+  }
+  pane.scrollTop = targetTop;
 }
 
 function matchScrolling(pane, events, context) {
@@ -103,16 +123,15 @@ function matchScrolling(pane, events, context) {
     }
   }
   context.activePane = pane.id;
-  context.activeUntil = now + 5000;
+  context.activeUntil = now + 1000;
 
   foo = events;
 
-  console.log("Pane " + pane.id + " wants others to match scrolling with " + events.length + " items.");
   const wanted = events[0].target;
 
   for (const element of context.panes) {
     if (element.id !== pane.id) {
-      scrollToComment(wanted, element);
+      scrollToItem(wanted, element);
     }
   }
 }
@@ -129,9 +148,10 @@ function watchScrolling(pane, context) {
 }
 
 function setRenderPanes(panes) {
+  const now = new Date().getTime();
   const context = {
     activePane: null,
-    activeUntil: 0,
+    activeUntil: now + 1000,
     panes: panes,
   };
   for (pane of panes) {
@@ -140,18 +160,13 @@ function setRenderPanes(panes) {
 }
 
 function renderLanguageTo(element, category, language) {
-  console.log("Rendering to " + element.id);
   for (const watched of element.observing) {
     element.observer.unobsrve(watched);
   }
   element.innerHTML = BUILT.snippets[category][language].innerHTML;
-  for (const watch of element.querySelectorAll(".hljs-comment")) {
+  for (const watch of element.querySelectorAll(".hljs-comment,h3")) {
     element.observer.observe(watch);
   }
-}
-
-function tagComments(language, renderDiv) {
-  const allComments = renderDiv.querySelectorAll('.hljs-comment');
 }
 
 function buildIndex() {
@@ -171,7 +186,6 @@ function buildIndex() {
           appendSnippet(renderDiv, language.css, topic, displaytopics[topic], language.snippets[topic]);
         }
       }
-      tagComments(language, renderDiv);
       languages[language.name] = renderDiv;
     }
     categories[category.name] = languages;

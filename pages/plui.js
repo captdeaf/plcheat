@@ -15,6 +15,7 @@
 // Used from plcheat:
 //   setRenderPanes(elements)
 //   renderLanguageTo(element, selectedCategory, language)
+//   searchAdvanced(phrase)
 
 function getAll(identifier) {
   return document.querySelectorAll(identifier);
@@ -38,38 +39,55 @@ function setSaved(name, val) {
   return val;
 }
 
-function setupDescription() {
-  const desc = get('#description');
-  const close = get('#description-closer');
-  const open = get('#description-opener');
-  const statekey = 'description-state';
-  const state = localStorage.getItem(statekey);
+function addToggle(attr, stateKey, defaultState, callback) {
+  // checkbox.onchange = addToggle('checked',
+  //                               'advancedSearch', 
+  //                               false,
+  //                               function(enabled) {
+  //                                 if (enabled) {
+  //                                   ...
+  //                                 }
+  //                               });
+  //  if attr is a function, it's called instead of element[attr] boolean.
+  //  if attr is undefined, it's a toggle.
+  let state = getSaved(stateKey, defaultState) === 'true';
 
-  const opendisplay = open.style.display;
-  const closedisplay = close.style.display;
+  let checkElement = function(target) {
+    return target[attr];
+  };
+  if (attr === undefined) {
+    checkElement = function() {
+      return !state;
+    };
+  } else if (typeof(attr) === typeof(checkElement)) {
+    checkElement = attr;
+  }
+
+  callback(state);
+
+  return function(target) {
+    state = checkElement(target);
+    setSaved(stateKey, "" + state);
+    callback(state);
+  }
+}
+
+function setupAbout() {
+  const desc = get('#about');
+  const toggles = getAll('.toggle-about');
+
   const descdisplay = desc.style.display;
 
-  function closeDescription() {
-    desc.style.display = 'none';
-    close.style.display = 'none';
-    open.style.display = opendisplay;
-    localStorage.setItem(statekey, 'closed');
-  }
+  const toggleAbout = addToggle(undefined, 'about-shown', false, function(enabled) {
+    if (enabled) {
+      desc.style.display = 'none';
+    } else {
+      desc.style.display = descdisplay;
+    }
+  });
 
-  function openDescription() {
-    desc.style.display = descdisplay;
-    close.style.display = closedisplay;
-    open.style.display = 'none';
-    localStorage.setItem(statekey, 'open');
-  }
-
-  close.onclick = closeDescription;
-  open.onclick = openDescription;
-
-  if (state === 'closed') {
-    closeDescription();
-  } else {
-    openDescription();
+  for (const toggle of toggles) {
+    toggle.onclick = toggleAbout;
   }
 }
 
@@ -91,8 +109,58 @@ function buildSelect(element, options) {
   }
 }
 
+function setupAdvancedSearch() {
+  const stateKey = 'advanced-override';
+  let checkbox = get('#advanced-search');
+  let searchbox = get('#searchbox');
+
+  const sheetLeft = get('#sheetleft');
+  const sheetRight = get('#sheetright');
+
+  let enableOverride = false;
+
+  const toggleAbout = addToggle('checked', 'advanced-override', false, function(enabled) {
+    enableOverride = enabled;
+  });
+
+  let curSearch = undefined;
+  const onchange = function(search) {
+    if (searchbox.value.length >= 2) {
+      if (curSearch !== search) {
+        curSearch = search;
+        console.log("Searching " + search);
+        if (searchAdvanced(sheetLeft, search)) return;
+        if (searchAdvanced(sheetRight, search)) return;
+
+        searchbox.style['border-color'] = 'red';
+        setTimeout(function() {
+          searchbox.style['border-color'] = null;
+        }, 500);
+      }
+    }
+  };
+
+  let timer = undefined;
+  const watchbox = function() {
+    if (timer !== undefined) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(function() {
+      let normalized = searchbox.value.trim().replace(/\s\s+/g, ' ').replace(/[^a-z ]/, '').toLowerCase();
+      if (normalized != searchbox.value) {
+        searchbox.value = normalized;
+      }
+      onchange(normalized);
+    }, 100);
+  };
+
+  searchbox.onkeypress = watchbox;
+  searchbox.onkeyup = watchbox;
+}
+
 function setupUI() {
-  setupDescription();
+  setupAbout();
+  setupAdvancedSearch();
 
   const categorySelect = get('#category');
   const fromSelect = get('#langfrom');

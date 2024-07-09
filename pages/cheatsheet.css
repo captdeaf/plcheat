@@ -66,6 +66,7 @@ body {
 }
 
 #topbar #title {
+  cursor: pointer;
   flex: 0 0 content;
   display: inline-block;
   margin-right: 1em;
@@ -78,6 +79,15 @@ body {
   -webkit-text-fill-color: #ff8c00;
 }
 
+#topbar #title #qmark {
+  font-weight: bold;
+  bottom: 0.5em;
+  right: 1em;
+  font-size: 50%;
+  -webkit-text-stroke: 0px blue;
+  -webkit-text-fill-color: blue;
+}
+
 #topbar .link {
   position: relative;
   flex: 0 0 content;
@@ -85,13 +95,6 @@ body {
   height: 100%;
   font-size: 88%;
   bottom: 0px;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  padding: 0;
-  margin: 0;
 }
 
 #topbar div {
@@ -108,24 +111,44 @@ a {
   flex: 1 1 auto;
 }
 
-#description {
-  position: relative;
-  flex: 1 1 content;
+#about {
+  position: absolute;
+  z-index: 1000;
+  top: 5em;
+  left: 5em;
+  width: 80vw;
+  max-width: 40em;
   text-wrap: auto;
   display: inline-block;
-  padding: 0.5em 1em 0.5em 1em;
-  border: 1px solid black;
+  padding: 0.5em 1em 1em 1em;
+  border: 5px solid #363;
   background-color: #eee;
+  overflow-y: scroll;
 }
 
-#description-closer {
+#about .toggle-about {
   cursor: pointer;
-  display: inline-block;
   position: absolute;
-  font-size: 88%;
-  bottom: 0.5em;
+  font-weight: bold;
+  top: 0.5em;
   right: 1em;
   color: blue;
+}
+
+#about section {
+  margin-left: 1em;
+  background-color: #ddd;
+  padding: 0.2em 1em 1em 1em;
+}
+
+#about section p {
+  text-indent: 2em;
+}
+
+#about p code {
+  background-color: #bbb;
+  color: #33f;
+  padding: 3px;
 }
 
 #selections {
@@ -164,9 +187,15 @@ a {
   color: #cc5900;
 }
 
-#searchbar input {
+#searchbox {
   font-size: 90%;
   width: 100%;
   max-width: 40em;
   margin-bottom: 1em;
+  border: 2px solid white;
+}
+
+label {
+  cursor: pointer;
+  color: blue;
 }

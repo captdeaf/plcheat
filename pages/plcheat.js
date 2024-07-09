@@ -8,6 +8,7 @@
 //
 // Called from index.html:
 //   buildIndexes();
+//   searchAdvanced(phrase);
 //
 // Called from PLUI:
 //   setRenderPanes(elements)
@@ -37,14 +38,21 @@ function getSortedTopics(category) {
   return topickeys;
 }
 
-function appendSnippet(element, css, topic, displaytopic, snippet) {
+function appendSnippet(element, css, aliases, displaytopic, snippet) {
   const title = document.createElement("h3");
   title.innerText = displaytopic;
+
+  title.aliases = aliases;
 
   const codesnippet = document.createElement("code");
   codesnippet.innerHTML = snippet;
   codesnippet.className = "language-" + css;
   hljs.highlightElement(codesnippet);
+
+  // Add topic to each for advanced searching.
+  for (const element of codesnippet.querySelectorAll(".hljs-comment")) {
+    element.aliases = aliases;
+  }
   const presnippet = document.createElement("pre");
   presnippet.appendChild(codesnippet);
 
@@ -59,53 +67,89 @@ function normalize(str) {
   return str.split(/\s+/)
 }
 
-function bestMatch(visibles, targets) {
-  const best = {
+function bestMatch(searches, targets, isAdvanced) {
+  let best = {
     score: 0,
     rest: 1000,
-    target: visibles[0],
+    target: targets[0],
+    matches: [],
   }
 
-  console.log(visibles);
+  let isMatch = function(find, word) {
+    return find == word;
+  }
+
+  if (isAdvanced) {
+    isMatch = function(find, word) {
+      return word.includes(find);
+    }
+  }
  
-  for (const visible of visibles) {
+  for (const search of searches) {
     const wants = {};
-    for (const word of normalize(visible.innerText)) {
+    for (const word of normalize(search)) {
       wants[word] = true;
     }
 
     for (const target of targets) {
-      let score = 0;
-      let rest = 0;
-      let targetWants = Object.assign({}, wants);
-      for (const word of normalize(target.innerText)) {
-        if (targetWants[word]) {
-          score += 1;
-        } else {
-          rest += 1;
+      let cur = {
+        score: 0,
+        rest: 0,
+        target: target,
+        matches: [],
+      };
+      let searchWanted = Object.assign({}, wants);
+
+      // Score consists of two things:
+      //   1) Matched words (e.g: 2 matches)
+      //   2) Unmatched words / "rest" (So shorter is better)
+      for (const searchWord of Object.keys(searchWanted)) {
+        let found = false;
+        for (const word of normalize(target.innerText)) {
+          if (isMatch(searchWord, word)) {
+            cur.score += 1;
+            cur.matches.push(word);
+            delete searchWanted[searchWord];
+            break;
+          }
+          if (word.length > 3) {
+            // Don't add to rest on "is", "the", "a", "and", etc.
+            cur.rest += 1;
+          }
+        }
+        if (searchWanted[searchWord]) {
+          cur.rest += 1;
         }
       }
-      rest += Object.keys(targetWants).length;
+      cur.rest += Object.keys(searchWanted).length;
+
       // if (score > 0) {
         // console.log("Comparing " + target.innerText + " vs " + wanted.innerText + ": " + score + " - " + rest);
       // }
-      if ((score > best.score && rest <= best.rest) || (score >= best.score && rest < best.rest)) {
-        best.score = score;
-        best.fit = target;
-        best.rest = rest;
+      if ((cur.score > best.score && cur.rest <= best.rest) ||
+          (cur.score >= best.score && cur.rest < best.rest) ||
+          (cur.score - best.score > 1) ||
+          (best.rest - cur.rest > 1 && cur.score == best.score)) {
+        best = cur;
       }
     }
-    if (best.score >= 2 || best.rest < 1) {
-      return best.fit;
-    }
+    if (best.score >= 2 || best.rest < 3) break;
   }
-  // console.log("Winner of " + visibles.length + ": " + best.fit.innerText + " vs " + wanted.innerText + ": " + best.score + " - " + best.rest);
-  return best.fit;
+  console.log("Best:");
+  console.log(best);
+  if (best.score >= 1 || best.rest == 0) {
+    return best.target;
+  }
+  console.log("No best?");
 }
 
-function scrollToVisible(targetPane, visibles) {
+function scrollToVisible(targetPane, phrases, isAdvanced) {
   const items = targetPane.querySelectorAll(".hljs-comment,h3");
-  const best = bestMatch(visibles, items);
+  const best = bestMatch(phrases, items, isAdvanced);
+
+  if (!best) {
+    return false
+  }
 
   // Tricky part - scrolling math.
   let panetop = targetPane.getBoundingClientRect().top;
@@ -118,6 +162,8 @@ function scrollToVisible(targetPane, visibles) {
     targetTop = 0;
   }
   targetPane.scrollTop = targetTop;
+
+  return true
 }
 
 function matchScrolling(pane, visibles, context) {
@@ -136,7 +182,10 @@ function matchScrolling(pane, visibles, context) {
 
   for (const element of context.panes) {
     if (element.id !== pane.id) {
-      scrollToVisible(element, visibles);
+      const phrases = visibles.map(function(visible) {
+        return visible.innerText;
+      });
+      scrollToVisible(element, phrases);
     }
   }
 }
@@ -214,4 +263,8 @@ function buildIndex() {
     categories[category.name] = languages;
   }
   BUILT.snippets = categories;
+}
+
+function searchAdvanced(pane, phrase) {
+  return scrollToVisible(pane, [phrase], true);
 }

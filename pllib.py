@@ -123,7 +123,6 @@ class Category(object):
     def __init__(self, directory, snippets=False):
         self.name = basename(directory)
         self.languages = dict()
-        self.aliases = dict()
         self.topics = dict()
 
         for file in glob(f"{directory}/LANGS/*.txt"):
@@ -145,14 +144,18 @@ class Category(object):
         displayname = topic
 
         # Aliases - first line is display name, too.
-        self.aliases[topic] = topic
+        aliases = [topic]
         if os.path.exists(f"{directory}/ALIASES.txt"):
             lines = readfile(f"{directory}/ALIASES.txt", split=True)
             displayname = lines[0]
             for line in lines:
-                self.aliases[' '.join(line.lower().split())] = topic
+                aliases.append(line)
 
-        self.topics[topic] = displayname
+        self.topics[topic] = dict(
+            displayname=displayname,
+            aliases=aliases,
+            name=topic,
+        )
 
         if snippets:
             # Now read in all examples and store in their Language object.

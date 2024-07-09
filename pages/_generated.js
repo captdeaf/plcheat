@@ -1,7 +1,7 @@
 // Auto-Generated, do not edit
 const GENERATED = {
-  "buildtime": 1720382218,
-  "generatetime": 3440760567,
+  "buildtime": 1720551863,
+  "generatetime": 3440928725,
   "categories": {
     "programming": {
       "name": "programming",
@@ -202,23 +202,30 @@ const GENERATED = {
           }
         }
       },
-      "aliases": {
-        "regexps": "regexps",
-        "regular expressions": "regexps",
-        "pattern matching": "regexps",
-        "validation": "regexps",
-        "string matching": "regexps",
-        "pcre": "regexps",
-        "search pattern": "regexps",
-        "matcher": "regexps",
-        "arrays": "arrays",
-        "list": "arrays",
-        "ordered list": "arrays",
-        "vector": "arrays"
-      },
       "topics": {
-        "regexps": "Regular Expressions",
-        "arrays": "Arrays"
+        "regexps": {
+          "displayname": "Regular Expressions",
+          "aliases": [
+            "regexps",
+            "Regular Expressions",
+            "validation",
+            "regexps",
+            "pcre",
+            "matcher"
+          ],
+          "name": "regexps"
+        },
+        "arrays": {
+          "displayname": "Arrays",
+          "aliases": [
+            "arrays",
+            "Arrays",
+            "list",
+            "ordered",
+            "vector"
+          ],
+          "name": "arrays"
+        }
       },
       "displayname": "Programming Languages"
     }

@@ -22,27 +22,55 @@ const SCROLL_DELAY = 1000;
 // storage when our json object gets BIG.
 const BUILT = {};
 
-function getSortedTopics(category) {
-  let dtopics = [];
-  const rtopics = {};
-  for (const [topic, dispname] of Object.entries(category.topics)) {
-    rtopics[dispname] = topic;
-    dtopics.push(dispname);
-  }
-  dtopics = dtopics.sort();
-  topickeys = [];
-  for (dtopic of dtopics) {
-    topickeys.push(rtopics[dtopic]);
+function sortKey(unsorted, map) {
+  console.log(unsorted);
+  const isIterator = typeof(unsorted[Symbol.iterator]) === 'function';
+  const revmap = {};
+  const tosort = [];
+
+  if (isIterator) {
+    for (const item of unsorted) {
+      const result = map(item);
+      revmap[result] = item;
+      tosort.push(result);
+    }
+  } else {
+    for (const [name, item] of Object.entries(unsorted)) {
+      const result = map(item);
+      revmap[result] = {name: name, item: item };
+      tosort.push(result);
+    }
   }
 
-  return topickeys;
+  const sorted = tosort.sort();
+
+  if (isIterator) {
+    return sorted.map(function(result) {
+      return revmap[result];
+    });
+  } else {
+    const ret = {};
+    for (const result of sorted) {
+      ret[revmap[result].name] = revmap[result].item;
+    }
+    return ret;
+  }
+
 }
 
-function appendSnippet(element, css, aliases, displaytopic, snippet) {
-  const title = document.createElement("h3");
-  title.innerText = displaytopic;
+function getSortedTopics(category) {
+  const topics = sortKey(category.topics, function(topic) {
+    return topic.displayname;
+  });
+  return topics;
+}
 
-  title.aliases = aliases;
+function appendSnippet(element, css, topic, snippet) {
+  const title = document.createElement("h3");
+  title.innerText = topic.displayname;
+
+  title.dataset.aliases = topic.aliases;
+  title.dataset.original = title.innerText;
 
   const codesnippet = document.createElement("code");
   codesnippet.innerHTML = snippet;
@@ -51,7 +79,8 @@ function appendSnippet(element, css, aliases, displaytopic, snippet) {
 
   // Add topic to each for advanced searching.
   for (const element of codesnippet.querySelectorAll(".hljs-comment")) {
-    element.aliases = aliases;
+    element.dataset.aliases = topic.aliases;
+    element.dataset.original = element.innerText;
   }
   const presnippet = document.createElement("pre");
   presnippet.appendChild(codesnippet);
@@ -75,6 +104,8 @@ function bestMatch(searches, targets, isAdvanced) {
     matches: [],
   }
 
+  const oks = []
+
   let isMatch = function(find, word) {
     return find == word;
   }
@@ -97,6 +128,7 @@ function bestMatch(searches, targets, isAdvanced) {
         rest: 0,
         target: target,
         matches: [],
+        partialMatches: [],
       };
       let searchWanted = Object.assign({}, wants);
 
@@ -105,16 +137,27 @@ function bestMatch(searches, targets, isAdvanced) {
       //   2) Unmatched words / "rest" (So shorter is better)
       for (const searchWord of Object.keys(searchWanted)) {
         let found = false;
-        for (const word of normalize(target.innerText)) {
+        for (const word of target.dataset.aliases.split(' ')) {
           if (isMatch(searchWord, word)) {
-            cur.score += 1;
-            cur.matches.push(word);
+            cur.score += 2;
+            found = true;
             delete searchWanted[searchWord];
-            break;
           }
-          if (word.length > 3) {
-            // Don't add to rest on "is", "the", "a", "and", etc.
-            cur.rest += 1;
+        }
+        if (!found) {
+          for (const word of normalize(target.innerText)) {
+            if (isMatch(searchWord, word)) {
+              cur.score += 1;
+              found = true;
+              cur.matches.push(word);
+              cur.partialMatches.push(searchWord);
+              delete searchWanted[searchWord];
+              break;
+            }
+            if (word.length > 3) {
+              // Don't add to rest on "is", "the", "a", "and", etc.
+              cur.rest += 1;
+            }
           }
         }
         if (searchWanted[searchWord]) {
@@ -123,9 +166,9 @@ function bestMatch(searches, targets, isAdvanced) {
       }
       cur.rest += Object.keys(searchWanted).length;
 
-      // if (score > 0) {
-        // console.log("Comparing " + target.innerText + " vs " + wanted.innerText + ": " + score + " - " + rest);
-      // }
+      if (cur.score > 0) {
+        oks.push(cur);
+      }
       if ((cur.score > best.score && cur.rest <= best.rest) ||
           (cur.score >= best.score && cur.rest < best.rest) ||
           (cur.score - best.score > 1) ||
@@ -135,12 +178,45 @@ function bestMatch(searches, targets, isAdvanced) {
     }
     if (best.score >= 2 || best.rest < 3) break;
   }
-  console.log("Best:");
-  console.log(best);
+  for (const cur of oks) {
+    if (cur.score === best.score && cur.rest === best.rest) {
+      highlightMatches(cur, 'match-good');
+    } else {
+      highlightMatches(cur, 'match-ok');
+    }
+  }
   if (best.score >= 1 || best.rest == 0) {
     return best.target;
   }
-  console.log("No best?");
+}
+
+let highlighted = [];
+
+function clearHighlights() {
+  for (const highlighting of highlighted) {
+    highlighting.innerHTML = highlighting.dataset.original;
+  }
+  highlighted = [];
+}
+
+function highlightMatches(cur, cls) {
+  const text = cur.target.dataset.original;
+  highlighted.push(cur.target);
+  if (cur.matches.length == 0) return;
+
+  let matches = cur.matches;
+  if (getSaved('highlight-partials', 'false') === 'true') {
+    console.log("Highlighting partials");
+    matches = cur.partialMatches;
+  } else {
+    console.log("Highlighting words");
+  }
+
+  const rx = new RegExp(matches.join("|"), 'i');
+  let result = text.replace(rx, function(orig) {
+    return '<span class="' + cls + '">' + orig + '</span>';
+  });
+  cur.target.innerHTML = result;
 }
 
 function scrollToVisible(targetPane, phrases, isAdvanced) {
@@ -208,7 +284,6 @@ function watchScrolling(pane, context) {
         return a.getBoundingClientRect().top - b.getBoundingClientRect().top;
       });
     }
-    // console.log("Observed " + events.length + " events, " + pane.visibles.length + " visibles");
     matchScrolling(pane, pane.visibles, context);
   }, {
     root: pane,
@@ -247,15 +322,15 @@ function buildIndex() {
   const categories = {};
   for (const category of Object.values(GENERATED.categories)) {
     // Sort all topics.
-    displaytopics = category.topics;
-    topics = getSortedTopics(category);
+    const displaytopics = category.topics;
+    const topics = getSortedTopics(category);
 
     const languages = {};
     for (const language of Object.values(category.languages)) {
       var renderDiv = document.createElement("div");
-      for (const topic of topics) {
-        if (language.snippets[topic] !== undefined) {
-          appendSnippet(renderDiv, language.css, topic, displaytopics[topic], language.snippets[topic]);
+      for (const topic of Object.values(topics)) {
+        if (language.snippets[topic.name] !== undefined) {
+          appendSnippet(renderDiv, language.css, topic, language.snippets[topic.name]);
         }
       }
       languages[language.name] = renderDiv;

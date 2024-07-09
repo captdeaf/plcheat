@@ -23,16 +23,29 @@
 
 #sheetleft {
   background-color: #eef;
+  padding-left: 1em;
 }
 
 #sheetright {
   margin-left: auto;
+  padding-left: 1em;
   background-color: #efe;
 }
 
 #sheet div a {
   display: block;
   padding: 0.5em;
+}
+
+#sheet span.match-good {
+  padding: 2px;
+  background-color: green;
+  color: red;
+}
+
+#sheet span.match-ok {
+  background-color: yellow;
+  color: red;
 }
 
 .plstyle {
@@ -138,11 +151,18 @@ body {
 #about section {
   margin-left: 1em;
   background-color: #ddd;
-  padding: 0.2em 1em 1em 1em;
+  padding: 0.7em 1em 1em 1em;
 }
 
 #about section p {
   text-indent: 2em;
+}
+
+#about section .toggler {
+  display: inline-block;
+  float: right;
+  color: blue;
+  cursor: pointer;
 }
 
 #about p code {
@@ -196,6 +216,7 @@ body {
 }
 
 label {
+  color: #ff8c00;
+  font-weight: bold;
   cursor: pointer;
-  color: blue;
 }

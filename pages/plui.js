@@ -50,7 +50,7 @@ function addToggle(attr, stateKey, defaultState, callback) {
   //                               });
   //  if attr is a function, it's called instead of element[attr] boolean.
   //  if attr is undefined, it's a toggle.
-  let state = getSaved(stateKey, defaultState) === 'true';
+  let state = getSaved(stateKey, '' + defaultState) === 'true';
 
   let checkElement = function(target) {
     return target[attr];
@@ -63,12 +63,12 @@ function addToggle(attr, stateKey, defaultState, callback) {
     checkElement = attr;
   }
 
-  callback(state);
+  if (callback) callback(state);
 
-  return function(target) {
-    state = checkElement(target);
+  return function(evt) {
+    state = checkElement(evt.target);
     setSaved(stateKey, "" + state);
-    callback(state);
+    if (callback) callback(state);
   }
 }
 
@@ -111,7 +111,8 @@ function buildSelect(element, options) {
 
 function setupAdvancedSearch() {
   const stateKey = 'advanced-override';
-  let checkbox = get('#advanced-search');
+  let overrideCheckbox = get('#advanced-search');
+  let highlightPartialCheckbox = get('#highlight-partials');
   let searchbox = get('#searchbox');
 
   const sheetLeft = get('#sheetleft');
@@ -119,24 +120,59 @@ function setupAdvancedSearch() {
 
   let enableOverride = false;
 
-  const toggleAbout = addToggle('checked', 'advanced-override', false, function(enabled) {
-    enableOverride = enabled;
-  });
+  window.addEventListener("keydown",function (e) {
+    if (e.ctrlKey && e.keyCode === 70) {
+      if (enableOverride) {
+        searchbox.focus();
+        e.preventDefault();
+      }
+    } else if (e.keyCode == 27) {
+      if (document.activeElement == searchbox) {
+        searchbox.value = "";
+        searchbox.focus();
+        e.preventDefault();
+      }
+    }
+  })
+
+  overrideCheckbox.onchange = addToggle(
+      'checked',
+      'advanced-override',
+      false,
+      function(enabled) {
+        enableOverride = enabled;
+        overrideCheckbox.checked = enabled;
+      }
+  );
+
+  highlightPartialCheckbox.onchange = addToggle(
+      'checked',
+      'highlight-partials',
+      'false',
+      function(enabled) {
+        highlightPartialCheckbox.checked = enabled;
+      },
+  );
 
   let curSearch = undefined;
   const onchange = function(search) {
     if (searchbox.value.length >= 2) {
       if (curSearch !== search) {
         curSearch = search;
-        console.log("Searching " + search);
-        if (searchAdvanced(sheetLeft, search)) return;
-        if (searchAdvanced(sheetRight, search)) return;
+        clearHighlights();
+        let found = false;
+        if (searchAdvanced(sheetLeft, search)) found = true;
+        if (searchAdvanced(sheetRight, search)) found = true;
 
-        searchbox.style['border-color'] = 'red';
-        setTimeout(function() {
-          searchbox.style['border-color'] = null;
-        }, 500);
+        if (!found) {
+          searchbox.style['border-color'] = 'red';
+          setTimeout(function() {
+            searchbox.style['border-color'] = null;
+          }, 500);
+        }
       }
+    } else {
+      clearHighlights();
     }
   };
 
@@ -146,11 +182,11 @@ function setupAdvancedSearch() {
       clearTimeout(timer);
     }
     timer = setTimeout(function() {
-      let normalized = searchbox.value.trim().replace(/\s\s+/g, ' ').replace(/[^a-z ]/, '').toLowerCase();
+      let normalized = searchbox.value.toLowerCase().replace(/\s\s+/g, ' ').replace(/[^a-z ]/, '');
       if (normalized != searchbox.value) {
         searchbox.value = normalized;
       }
-      onchange(normalized);
+      onchange(normalized.trim());
     }, 100);
   };
 
@@ -158,9 +194,39 @@ function setupAdvancedSearch() {
   searchbox.onkeyup = watchbox;
 }
 
+function setupToggled() {
+  function createToggle(section) {
+    // We should receive a section.
+    let toggler = section.querySelector(".toggler");
+    let paras = section.querySelectorAll("p");
+
+    let showSection = false;
+    if (section.dataset['show'] === 'true') {
+      showSection = true;
+    }
+
+    toggler.onclick = addToggle(undefined, section.id, showSection, function(enabled) {
+      if (enabled) {
+        for (const p of paras) {
+          p.style.display = 'block';
+        }
+      } else {
+        for (const p of paras) {
+          p.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  for (const element of getAll(".toggledesc")) {
+    createToggle(element);
+  }
+}
+
 function setupUI() {
   setupAbout();
   setupAdvancedSearch();
+  setupToggled();
 
   const categorySelect = get('#category');
   const fromSelect = get('#langfrom');

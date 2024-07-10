@@ -1,2 +1,2 @@
 displayname: Programming
-openai_question: I want a fairly comprehensive list of common programming uses with enough detail to generate code about the topic "{want}".
+openai_question: I want a basic list of common programming uses with enough detail to generate code about the topic "{want}".

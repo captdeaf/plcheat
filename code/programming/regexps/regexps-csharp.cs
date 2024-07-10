@@ -1,68 +1,58 @@
-// C# - RegexExamples.cs
 using System;
 using System.Text.RegularExpressions;
 
-class RegexExamples
+class Program
 {
     static void Main()
     {
-        // Pattern Matching
-        string text = "There are 123 apples";
-        string pattern = @"\d+";  // Match one or more digits
-        bool isMatch = Regex.IsMatch(text, pattern);
-        Console.WriteLine("Pattern Matching: " + (isMatch ? "Match found!" : "No match found."));
-
-        // Search and Replace
-        text = "Hello 123, meet 456";
-        string result = Regex.Replace(text, pattern, "number");
-        Console.WriteLine("Search and Replace: " + result);  // "Hello number, meet number"
-
-        // String Splitting
-        text = "apple, orange; banana, grape";
-        string[] resultArray = Regex.Split(text, "[,;]");
-        Console.WriteLine("String Splitting: " + string.Join(", ", resultArray));  // ["apple", " orange", " banana", " grape"]
-
-        // Extracting Substrings
-        text = "The date is 2024-06-27";
-        pattern = @"(\d{4})-(\d{2})-(\d{2})";
-        Match match = Regex.Match(text, pattern);
-        if (match.Success)
-        {
-            Console.WriteLine("Extracting Substrings: " + match.Groups[1] + ", " + match.Groups[2] + ", " + match.Groups[3]);  // ["2024", "06", "27"]
-        }
-
-        // Validation
-        string email = "example@test.com";
-        pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-        isMatch = Regex.IsMatch(email, pattern);
-        Console.WriteLine("Validation: " + (isMatch ? "Valid email address!" : "Invalid email address."));
-
-        // Removing Unwanted Characters
-        text = "Hello, World!";
-        result = Regex.Replace(text, "[^\\w\\s]", "");  // Remove all non-alphanumeric characters
-        Console.WriteLine("Removing Unwanted Characters: " + result);  // "Hello World"
-
-        // Anchoring Searches
-        text = "The quick brown fox";
-        pattern = @"\bfox\b";  // Match 'fox' as a whole word
-        isMatch = Regex.IsMatch(text, pattern);
-        Console.WriteLine("Anchoring Searches: " + (isMatch ? "Found" : "Not Found"));
-
-[O        // Escaping Characters
-        string user_input = "some[unsafe]input";
-        string escaped_input = Regex.Escape(user_input);
-        Console.WriteLine("Escaping Characters: " + escaped_input);  // "some\[unsafe\]input"
-
-        // Conditional Matching
-        pattern = @"foo(?=bar)";  // Match 'foo' only if followed by 'bar'
-        text = "foobar and foo";
+        // Searching for specific patterns in text data
+        string text = "The quick brown fox jumps over the lazy dog.";
+        string pattern = @"\b\w{5}\b"; // Match 5-letter words
         MatchCollection matches = Regex.Matches(text, pattern);
-        Console.Write("Conditional Matching: ");
-        foreach (Match m in matches)
+        foreach (Match match in matches)
         {
-            Console.Write(m.Value + " ");  // "foo"
+            Console.WriteLine(match.Value);
         }
-        Console.WriteLine();
+
+        // Validating input forms (such as emails, phone numbers, etc.)
+        string email = "example@example.com";
+        string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        bool isValidEmail = Regex.IsMatch(email, emailPattern);
+        Console.WriteLine(isValidEmail);
+
+        // Data scraping
+        string htmlContent = "<html><body><h1>Hello, World!</h1></body></html>";
+        string htmlTagPattern = "<.*?>"; // Match HTML tags
+        string cleanText = Regex.Replace(htmlContent, htmlTagPattern, "");
+        Console.WriteLine(cleanText);
+
+        // Parsing and extracting information from structured data
+        string data = "Name: John, Age: 30, Location: USA";
+        string agePattern = @"Age:\s(\d+)";
+        Match ageMatch = Regex.Match(data, agePattern);
+        if (ageMatch.Success)
+        {
+            Console.WriteLine(ageMatch.Groups[1].Value);
+        }
+
+        // Replace strings that match a certain pattern with another string
+        string input = "Programming is fun!";
+        string replaced = Regex.Replace(input, @"\bfun\b", "awesome");
+        Console.WriteLine(replaced);
+
+        // Tokenizing strings into smaller components
+        string sentence = "Hello, World!";
+        string[] tokens = Regex.Split(sentence, @"\W");
+        foreach (string token in tokens)
+        {
+            Console.WriteLine(token);
+        }
+
+        // Filter and process text
+        string textToFilter = "123abc456xyz789";
+        string filteredText = Regex.Replace(textToFilter, @"\d", "");
+        Console.WriteLine(filteredText);
+
+        // Other examples omitted for brevity
     }
 }
-

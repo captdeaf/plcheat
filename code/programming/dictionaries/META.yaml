@@ -1,0 +1,16 @@
+aliases: hashmaps dictionaries hashes
+displayname: Dictionaries and Hashmaps
+operations:
+- Storing key-value pairs for quick retrieval
+- Implementing a cache or memoization system
+- Counting occurrences of elements in a collection
+- Mapping unique identifiers to objects or data
+- Building efficient lookup tables for data processing
+- Checking for the existence of an element in a collection
+- Implementing a data structure like a symbol table or associative array
+- Grouping and organizing data based on certain criteria
+- Providing a fast method for searching and accessing data
+question: Please respond to this question only with answers, formatted as a JSON array
+  of strings. I want a basic list of common programming uses with enough detail to
+  generate code about the topic "dictionaries and hashmaps".
+want: dictionaries and hashmaps

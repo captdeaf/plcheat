@@ -1,0 +1,16 @@
+aliases: time dates timestamp datetime timedelta
+displayname: Time, Date, and DateTime
+operations:
+- Displaying the current date and time
+- Calculating the difference between two dates
+- Formatting dates and times for user-friendly display
+- Converting between different date and time formats
+- Scheduling tasks or events based on specific dates and times
+- Implementing countdown timers or timers for specific events
+- Handling time zones and daylight saving time adjustments
+- Finding the day of week or month for a given date
+- Working with timestamps for tracking when events occur
+question: Please respond to this question only with answers, formatted as a JSON array
+  of strings. I want a basic list of common programming uses with enough detail to
+  generate code about the topic "interacting with time and dates".
+want: interacting with time and dates

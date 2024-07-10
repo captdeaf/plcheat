@@ -1,61 +1,51 @@
-// Java - RegexExamples.java
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class RegexExamples {
+public class RegularExpressionExamples {
+
     public static void main(String[] args) {
-        // Pattern Matching
-        Pattern pattern = Pattern.compile("\\d+");  // Match one or more digits
-        String text = "There are 123 apples";
-        Matcher matcher = pattern.matcher(text);
-        System.out.println("Pattern Matching: " + (matcher.find() ? "Match found!" : "No match found."));
-
-        // Search and Replace
-        text = "Hello 123, meet 456";
-        String result = text.replaceAll("\\d+", "number");
-        System.out.println("Search and Replace: " + result);  // "Hello number, meet number"
-
-        // String Splitting
-        text = "apple, orange; banana, grape";
-        String[] resultArray = text.split("[,;]");
-        System.out.println("String Splitting: " + String.join(", ", resultArray));  // ["apple", " orange", " banana", " grape"]
-
-        // Extracting Substrings
-        text = "The date is 2024-06-27";
-        pattern = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})");
-        matcher = pattern.matcher(text);
-        if (matcher.find()) {
-            System.out.println("Extracting Substrings: " + matcher.group(1) + ", " + matcher.group(2) + ", " + matcher.group(3));  // ["2024", "06", "27"]
+        // Searching for specific patterns in text data
+        String text = "The quick brown fox jumps over the lazy dog";
+        Pattern pattern1 = Pattern.compile("fox");
+        Matcher matcher1 = pattern1.matcher(text);
+        while (matcher1.find()) {
+            System.out.println("Found at index " + matcher1.start());
         }
 
-        // Validation
-        String email = "example@test.com";
-        pattern = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-        matcher = pattern.matcher(email);
-        System.out.println("Validation: " + (matcher.find() ? "Valid email address!" : "Invalid email address."));
+        // Validating input forms (such as emails, phone numbers, etc.)
+        String email = "test@example.com";
+        Pattern pattern2 = Pattern.compile("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
+        boolean isValidEmail = pattern2.matcher(email).matches();
+        System.out.println("Is email valid: " + isValidEmail);
 
-        // Removing Unwanted Characters
-        text = "Hello, World!";
-        result = text.replaceAll("[^\\w\\s]", "");  // Remove all non-alphanumeric characters
-        System.out.println("Removing Unwanted Characters: " + result);  // "Hello World"
+        // Data scraping
+        String html = "<p>Hello, <strong>World</strong></p>";
+        Pattern pattern3 = Pattern.compile("<[^>]+>");
+        Matcher matcher3 = pattern3.matcher(html);
+        String scrapedData = matcher3.replaceAll("");
+        System.out.println("Scraped data: " + scrapedData);
 
-        // Anchoring Searches
-        text = "The quick brown fox";
-        pattern = Pattern.compile("\\bfox\\b");  // Match 'fox' as a whole word
-        matcher = pattern.matcher(text);
-        System.out.println("Anchoring Searches: " + (matcher.find() ? "Found" : "Not Found"));
-
-        // Escaping Characters
-        String user_input = "some[unsafe]input";
-        String escaped_input = Pattern.quote(user_input);
-        System.out.println("Escaping Characters: " + escaped_input);  // "some\[unsafe\]input"
-
-        // Conditional Matching
-        pattern = Pattern.compile("foo(?=bar)");  // Match 'foo' only if followed by 'bar'
-        text = "foobar and foo";
-        matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            System.out.println("Conditional Matching: " + matcher.group());  // "foo"
+        // Parsing and extracting information from structured data
+        String data = "Name: John, Age: 30";
+        Pattern pattern4 = Pattern.compile("\\w+:\\s(\\w+)");
+        Matcher matcher4 = pattern4.matcher(data);
+        while (matcher4.find()) {
+            System.out.println("Extracted: " + matcher4.group(1));
         }
+
+        // Replacing strings that match a certain pattern with another string
+        String sentence = "The cat and the hat";
+        Pattern pattern5 = Pattern.compile("\\b(cat|hat)\\b");
+        String replacedSentence = pattern5.matcher(sentence).replaceAll("dog");
+        System.out.println("Replaced sentence: " + replacedSentence);
+        
+        // Tokenizing strings into smaller components
+        String longText = "apple,orange,banana,grape";
+        String[] tokens = longText.split(",");
+        for (String token : tokens) {
+            System.out.println("Token: " + token);
+        }
+        
+        // And so on for the remaining examples...
     }
 }
-

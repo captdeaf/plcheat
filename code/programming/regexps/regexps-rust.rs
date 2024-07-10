@@ -1,64 +1,91 @@
-// Rust - regex_examples.rs
-extern crate regex;
-use regex::Regex;
-
-fn main() {
-    // Pattern Matching
-    let pattern = Regex::new(r"\d+").unwrap();  // Match one or more digits
-    let text = "There are 123 apples";
-    println!("Pattern Matching: {}", if pattern.is_match(text) { "Match found!" } else { "No match found." });
-
-    // Search and Replace
-    let text = "Hello 123, meet 456";
-    let result = pattern.replace_all(text, "number");
-    println!("Search and Replace: {}", result);  // "Hello number, meet number"
-
-    // String Splitting
-    let text = "apple, orange; banana, grape";
-    let pattern = Regex::new(r"[ ,;]+").unwrap();
-    let result: Vec<&str> = pattern.split(text).collect();
-    println!("String Splitting: {:?}", result);  // ["apple", "orange", "banana", "grape"]
-
-    // Extracting Substrings
-    let log_entry = "The date is 2024-06-27";
-    let pattern = Regex::new(r"(\d{4})-(\d{2})-(\d{2})").unwrap();
-    if let Some(caps) = pattern.captures(log_entry) {
-        println!("Extracting Substrings: {:?}", &caps[1..4]);  // ["2024", "06", "27"]
-    }
-
-    // Validation
-    let email = "example@test.com";
-    let pattern = Regex::new(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").unwrap();
-    println!("Validation: {}", if pattern.is_match(email) { "Valid email address!" } else { "Invalid email address." });
-
-    // Parsing Structured Text
-    let log_entry = "127.0.0.1 - - [27/Jun/2024:10:00:00 +0000] \"GET /index.html HTTP/1.1\" 200 1234";
-    let pattern = Regex::new(r"(?P<ip>\d+\.\d+\.\d+\.\d+) - - \[(?P<date>[^\]]+)\] \"(?P<request>[^\"]+)\" (?P<status>\d+) (?P<size>\d+)").unwrap();
-    if let Some(caps) = pattern.captures(log_entry) {
-        println!("Parsing Structured Text: {:?}", caps);
-    }
-
-    // Removing Unwanted Characters
-    let text = "Hello, World!";
-    let pattern = Regex::new(r"[^\w\s]").unwrap();  // Remove all non-alphanumeric characters
-    let cleaned_text = pattern.replace_all(text, "");
-    println!("Removing Unwanted Characters: {}", cleaned_text);  // "Hello World"
-
-    // Anchoring Searches
-    let text = "The quick brown fox";
-    let pattern = Regex::new(r"\bfox\b").unwrap();  // Match 'fox' as a whole word
-    println!("Anchoring Searches: {}", if pattern.is_match(text) { "Found" } else { "Not Found" });
-
-    // Escaping Characters
-    let user_input = "some[unsafe]input";
-    let escaped_input = regex::escape(user_input);
-    let pattern = Regex::new(&escaped_input).unwrap();
-    println!("Escaping Characters: {:?}", pattern);  // "some\[unsafe\]input"
-
-    // Conditional Matching
-    let pattern = Regex::new(r"foo(?=bar)").unwrap();  // Match 'foo' only if followed by 'bar'
-    let text = "foobar and foo";
-    let matches: Vec<&str> = pattern.find_iter(text).map(|mat| mat.as_str()).collect();
-    println!("Conditional Matching: {:?}", matches);  // ["foo"]
-}
-
+[
+"use regex::Regex; // Import the regex crate",
+"",
+"fn main() {",
+"    let text = \"Some example text with 12345 numbers in it\";",
+"",
+"    // Searching for specific patterns in text data",
+"    let re = Regex::new(r\"\\d+\").unwrap();",
+"    if let Some(mat) = re.find(text) {",
+"        println!(\"Found number: {}\", mat.as_str());",
+"    }",
+"",
+"    // Validating input forms (such as emails, phone numbers, etc.)",
+"    let email = \"test@example.com\";",
+"    let re_email = Regex::new(r\"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}\").unwrap();",
+"    if re_email.is_match(email) {",
+"        println!(\"Valid email!\");",
+"    } else {",
+"        println!(\"Invalid email format!\");",
+"    }",
+"",
+"    // Data scraping",
+"    // ...",
+"",
+"    // Parsing and extracting information from structured data",
+"    // ...",
+"",
+"    // Replacing strings that match a certain pattern with another string",
+"    let text_to_replace = \"Replace these words\";",
+"    let re_replace = Regex::new(r\"\\bReplace\\b\").unwrap();",
+"    let replaced_text = re_replace.replace_all(text_to_replace, \"New\");",
+"    println!(\"Replaced text: {}\", replaced_text);",
+"",
+"    // Tokenizing strings into smaller components",
+"    let sentence = \"Tokenize this sentence into words\";",
+"    let re_token = Regex::new(r\"\\\\w+\").unwrap();",
+"    let tokens: Vec<&str> = re_token.find_iter(sentence).map(|m| m.as_str()).collect();",
+"    println!(\"Tokens: {:?}\", tokens);",
+"",
+"    // Filtering and processing text",
+"    // ...",
+"",
+"    // Pattern matching in search algorithms",
+"    // ...",
+"",
+"    // Checking for the presence of specific characters or words",
+"    // ...",
+"",
+"    // Text manipulation and transformation",
+"    // ...",
+"",
+"    // Input sanitization",
+"    // ...",
+"",
+"    // Pattern-based data extraction",
+"    // ...",
+"",
+"    // Syntax highlighting in text editors or IDEs",
+"    // ...",
+"",
+"    // Data validation in form submission",
+"    // ...",
+"",
+"    // Extracting data from log files or other text-based records",
+"    // ...",
+"",
+"    // Pattern matching in natural language processing tasks",
+"    // ...",
+"",
+"    // Data cleaning and preprocessing",
+"    // ...",
+"",
+"    // Automating repetitive text processing tasks",
+"    // ...",
+"",
+"    // Generating reports or summaries based on text patterns",
+"    // ...",
+"",
+"    // Customizing search functionality in web applications",
+"    // ...",
+"",
+"    // Validating and formatting user input",
+"    // ...",
+"",
+"    // Parsing URLs and query parameters",
+"    // ...",
+"",
+"    // Implementing text-based search functionality",
+"    // ...",
+"}"
+]

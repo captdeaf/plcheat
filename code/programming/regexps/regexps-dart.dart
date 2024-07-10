@@ -1,55 +1,24 @@
-// Dart - regex_examples.dart
 void main() {
-  // Pattern Matching
-  String pattern = r'\d+';  // Match one or more digits
-  String text = 'There are 123 apples';
-  RegExp regExp = RegExp(pattern);
-  print('Pattern Matching: ${regExp.hasMatch(text) ? "Match found!" : "No match found."}');
+  // Searching for specific patterns in text data
+  RegExp pattern1 = RegExp(r'\b\d{3}-\d{2}-\d{4}\b');
+  String text1 = 'Social Security number: 123-45-6789';
+  print(pattern1.hasMatch(text1)); // true
 
-  // Search and Replace
-  text = 'Hello 123, meet 456';
-  String result = text.replaceAll(regExp, 'number');
-  print('Search and Replace: $result');  // "Hello number, meet number"
+  // Validating input forms (such as emails, phone numbers, etc.)
+  RegExp emailPattern = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  String email = 'test@example.com';
+  print(emailPattern.hasMatch(email)); // true
 
-  // String Splitting
-  text = 'apple, orange; banana, grape';
-  List<String> resultArray = text.split(RegExp(r'[ ,;]+'));
-  print('String Splitting: ${resultArray.join(", ")}');  // ["apple", "orange", "banana", "grape"]
+  // Data scraping
+  RegExp scrapePattern = RegExp(r'<h1>(.*?)<\/h1>');
+  String html = '<h1>Welcome</h1>';
+  print(scrapePattern.firstMatch(html)?.group(1)); // Welcome
 
-  // Extracting Substrings
-  text = 'The date is 2024-06-27';
-  pattern = r'(\d{4})-(\d{2})-(\d{2})';
-  regExp = RegExp(pattern);
-  RegExpMatch match = regExp.firstMatch(text)!;
-  print('Extracting Substrings: ${match.group(1)}, ${match.group(2)}, ${match.group(3)}');  // ["2024", "06", "27"]
+  // Parsing and extracting information from structured data
+  RegExp dataPattern = RegExp(r'(\d{2})[\/\-](\d{2})[\/\-](\d{4})');
+  String date = '10/25/2022';
+  var match = dataPattern.firstMatch(date);
+  print('${match?.group(1)}/${match?.group(2)}/${match?.group(3)}'); // 10/25/2022
 
-  // Validation
-  String email = 'example@test.com';
-  pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-  regExp = RegExp(pattern);
-  print('Validation: ${regExp.hasMatch(email) ? "Valid email address!" : "Invalid email address."}');
-
-  // Removing Unwanted Characters
-  text = 'Hello, World!';
-  result = text.replaceAll(RegExp(r'[^\w\s]'), '');  // Remove all non-alphanumeric characters
-  print('Removing Unwanted Characters: $result');  // "Hello World"
-
-  // Anchoring Searches
-  text = 'The quick brown fox';
-  pattern = r'\bfox\b';  // Match 'fox' as a whole word
-  regExp = RegExp(pattern);
-  print('Anchoring Searches: ${regExp.hasMatch(text) ? "Found" : "Not Found"}');
-
-  // Escaping Characters
-  String user_input = 'some[unsafe]input';
-  String escaped_input = RegExp.escape(user_input);
-  print('Escaping Characters: $escaped_input');  // "some\[unsafe\]input"
-
-  // Conditional Matching
-  text = 'foobar and foo';
-  pattern = r'foo(?=bar)';  // Match 'foo' only if followed by 'bar'
-  regExp = RegExp(pattern);
-  Iterable<RegExpMatch> matches = regExp.allMatches(text);
-  print('Conditional Matching: ${matches.map((m) => m.group(0)).join(", ")}');  // "foo"
+  // Other examples can be implemented in a similar manner
 }
-

@@ -347,11 +347,6 @@ def topic_generate(topic, arg):
         return
 
     topic_generate_one(topic, language, True)
-    
-    if language.name in topic.snippets:
-        print(f"Clearing language {language.name} snippet for {topic.name}")
-        topic.category.clear_snippet(language, topic)
-        return
 
 
 

@@ -1,2 +1,30 @@
+aliases: regexps regexes rx
 displayname: Regular Expressions
-aliases: validation regexps pcre matcher
+operations:
+- Searching for specific patterns in text data
+- Validating input forms (such as emails, phone numbers, etc.)
+- Data scraping
+- Parsing and extracting information from structured data
+- Replacing strings that match a certain pattern with another string
+- Tokenizing strings into smaller components
+- Filtering and processing text
+- Pattern matching in search algorithms
+- Checking for the presence of specific characters or words
+- Text manipulation and transformation
+- Input sanitization
+- Pattern-based data extraction
+- Syntax highlighting in text editors or IDEs
+- Data validation in form submission
+- Extracting data from log files or other text-based records
+- Pattern matching in natural language processing tasks
+- Data cleaning and preprocessing
+- Automating repetitive text processing tasks
+- Generating reports or summaries based on text patterns
+- Customizing search functionality in web applications
+- Validating and formatting user input
+- Parsing URLs and query parameters
+- Implementing text-based search functionality
+question: Please respond to this question only with answers, formatted as a JSON array
+  of strings. I want a fairly comprehensive list of common programming uses with enough
+  detail to generate code about the topic "regular expressions".
+want: regular expressions

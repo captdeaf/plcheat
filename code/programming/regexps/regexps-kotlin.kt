@@ -1,52 +1,44 @@
-// Kotlin - RegexExamples.kt
+import java.util.regex.Pattern
+
 fun main() {
-    // Pattern Matching
-    val pattern = "\\d+".toRegex()  // Match one or more digits
-    val text = "There are 123 apples"
-    println("Pattern Matching: ${if (pattern.containsMatchIn(text)) "Match found!" else "No match found."}")
-
-    // Search and Replace
-OBOBOB    var text = "Hello 123, meet 456"
-    var result = text.replace("\\d+".toRegex(), "number")
-    println("Search and Replace: $result")  // "Hello number, meet number"
-
-    // String Splitting
-    text = "apple, orange; banana, grape"
-    val resultArray = text.split("[,;]".toRegex())
-    println("String Splitting: ${resultArray.joinToString(", ")}")  // ["apple", " orange", " banana", " grape"]
-
-    // Extracting Substrings
-    text = "The date is 2024-06-27"
-    pattern = "(\\d{4})-(\\d{2})-(\\d{2})".toRegex()
-    val matchResult = pattern.find(text)
-    matchResult?.groupValues?.let { groups ->
-        println("Extracting Substrings: ${groups[1]}, ${groups[2]}, ${groups[3]}")  // ["2024", "06", "27"]
+    val text = "Regular expressions are very useful for text processing."
+    
+    // Searching for specific patterns in text data
+    val pattern1 = Pattern.compile("text")
+    val matcher1 = pattern1.matcher(text)
+    while (matcher1.find()) {
+        println("Found: ${matcher1.group()}")
     }
-
-    // Validation
-    val email = "example@test.com"
-    val emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$".toRegex()
-    println("Validation: ${if (emailPattern.matches(email)) "Valid email address!" else "Invalid email address."}")
-
-    // Removing Unwanted Characters
-    text = "Hello, World!"
-    result = text.replace("[^\\w\\s]".toRegex(), "")  // Remove all non-alphanumeric characters
-    println("Removing Unwanted Characters: $result")  // "Hello World"
-
-    // Anchoring Searches
-    text = "The quick brown fox"
-    val wordPattern = "\\bfox\\b".toRegex()  // Match 'fox' as a whole word
-    println("Anchoring Searches: ${if (wordPattern.containsMatchIn(text)) "Found" else "Not Found"}")
-
-    // Escaping Characters
-    val user_input = "some[unsafe]input"
-    val escaped_input = Regex.escape(user_input)
-    println("Escaping Characters: $escaped_input")  // "some\[unsafe\]input"
-
-    // Conditional Matching
-    text = "foobar and foo"
-    val lookaheadPattern = "foo(?=bar)".toRegex()  // Match 'foo' only if followed by 'bar'
-    val matches = lookaheadPattern.findAll(text).map { it.value }.toList()
-    println("Conditional Matching: ${matches.joinToString(", ")}")  // "foo"
+    
+    // Validating input forms (such as emails, phone numbers, etc.)
+    val emailPattern = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}\\b", Pattern.CASE_INSENSITIVE)
+    val email = "example@email.com"
+    println("Is email valid: ${emailPattern.matcher(email).matches()}")
+    
+    // Data scraping
+    val html = "<h1>Hello, World!</h1>"
+    val tagPattern = Pattern.compile("<.*?>")
+    val scrapedText = tagPattern.matcher(html).replaceAll("")
+    println("Scraped text: $scrapedText")
+    
+    // Parsing and extracting information from structured data
+    val data = "Name: John, Age: 30"
+    val extractPattern = Pattern.compile("Name: (.*), Age: (\\d+)")
+    val matcher2 = extractPattern.matcher(data)
+    while (matcher2.find()) {
+        val name = matcher2.group(1)
+        val age = matcher2.group(2)
+        println("Name: $name, Age: $age")
+    }
+    
+    // Replacing strings that match a certain pattern with another string
+    val replacePattern = Pattern.compile("\\buseful\\b")
+    val updatedText = replacePattern.matcher(text).replaceAll("powerful")
+    println("Updated text: $updatedText")
+    
+    // Tokenizing strings into smaller components
+    val tokens = text.split("\\s+".toRegex())
+    println("Tokens: $tokens")
+    
+    // Other use cases can be implemented similarly using regular expressions
 }
-

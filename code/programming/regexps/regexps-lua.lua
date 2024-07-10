@@ -1,55 +1,67 @@
--- Lua - regex_examples.lua
--- Lua does not have built-in regex support, but uses pattern matching instead
-
--- Pattern Matching
-local text = "There are 123 apples"
-local match = string.match(text, "%d+")
-print("Pattern Matching: " .. (match and "Match found!" or "No match found."))
-
--- Search and Replace
-text = "Hello 123, meet 456"
-local result = string.gsub(text, "%d+", "number")
-print("Search and Replace: " .. result)  -- "Hello number, meet number"
-
--- String Splitting
-text = "apple, orange; banana, grape"
-local result = {}
-for token in string.gmatch(text, "([^,;]+)") do
-  table.insert(result, token)
+-- searching for specific patterns in text data
+local text = "Hello, World! This is a sample text."
+local pattern = "%w+"
+for word in text:gmatch(pattern) do
+    print(word)
 end
-print("String Splitting: " .. table.concat(result, ", "))  -- ["apple", " orange", " banana", " grape"]
 
--- Extracting Substrings
-text = "The date is 2024-06-27"
-local year, month, day = string.match(text, "(%d%d%d%d)%-(%d%d)%-(%d%d)")
-print("Extracting Substrings: " .. year .. ", " .. month .. ", " .. day)  -- ["2024", "06", "27"]
-
--- Validation
-local email = "example@test.com"
-local pattern = "^[a-zA-Z0-9._%%+-]+@[a-zA-Z0-9.-]+%.[a-zA-Z]{2,}$"
-print("Validation: " .. (string.match(email, pattern) and "Valid email address!" or "Invalid email address."))
-
--- Removing Unwanted Characters
-text = "Hello, World!"
-local cleaned_text = string.gsub(text, "[^%w%s]", "")  -- Remove all non-alphanumeric characters
-print("Removing Unwanted Characters: " .. cleaned_text)  -- "Hello World"
-
--- Anchoring Searches
-text = "The quick brown fox"
-pattern = "%f[%w]fox%f[%W]"  -- Match 'fox' as a whole word
-print("Anchoring Searches: " .. (string.match(text, pattern) and "Found" or "Not Found"))
-
--- Escaping Characters
-local function escape_pattern(text)
-  return string.gsub(text, "([^%w])", "%%%1")
+-- validating input forms
+local email = "example@example.com"
+if string.match(email, "^[%w%.]+@[%w%.]+%.[%a]+$") then
+    print("Valid email address")
 end
-local user_input = "some[unsafe]input"
-local escaped_input = escape_pattern(user_input)
-print("Escaping Characters: " .. escaped_input)  -- "some%[unsafe%]input"
 
--- Conditional Matching
-text = "foobar and foo"
-pattern = "foo(?=bar)"  -- Match 'foo' only if followed by 'bar'
-local found = string.match(text, "foo()bar") and string.sub(text, string.match(text, "foo()bar") - 3, string.match(text, "foo()bar") - 1) or ""
-print("Conditional Matching: " .. found)  -- "foo"
+-- data scraping
+local html = [[ <p>This is a <b>sample</b> HTML text.</p> ]]
+local pattern = "<b>(.-)</b>"
+for match in string.gmatch(html, pattern) do
+    print(match)
+end
 
+-- parsing and extracting information from structured data
+local data = "name: John, age: 30, city: NYC"
+for key, value in data:gmatch("(%w+):%s*(%w+),?") do
+    print(key, value)
+end
+
+-- replacing strings that match a certain pattern
+local text = "HeLLo WoRLd"
+local new_text = text:gsub("%u", "*")
+print(new_text)
+
+-- tokenizing strings into smaller components
+local sentence = "Lua programming is fun"
+for word in sentence:gmatch("%S+") do
+    print(word)
+end
+
+-- filtering and processing text
+local text = "Lua is a powerful scripting language"
+local filtered_text = text:gsub("powerful", "awesome")
+print(filtered_text)
+
+-- pattern matching in search algorithms
+local text = "algorithm"
+if string.match(text, "rithm") then
+    print("Pattern found!")
+end
+
+-- checking for the presence of specific characters or words
+local text = "Hello, World!"
+if string.find(text, "World") then
+    print("Word found!")
+end
+
+-- text manipulation and transformation
+local text = "Lua is an awesome language"
+print(text:upper())
+
+-- input sanitization
+local input = "user<input>"
+local sanitized_input = input:gsub("<.+>", "")
+print(sanitized_input)
+
+-- pattern-based data extraction
+local data = "2021-05-20"
+local year, month, day = data:match("(%d+)-(%d+)-(%d+)")
+print(year, month, day)

@@ -1,4 +1,3 @@
-// Go - regex_examples.go
 package main
 
 import (
@@ -7,56 +6,46 @@ import (
 )
 
 func main() {
-    // Pattern Matching
-    pattern := `\d+`  // Match one or more digits
-    text := "There are 123 apples"
-    matched, _ := regexp.MatchString(pattern, text)
-    fmt.Println("Pattern Matching:", matched)
+    // Searching for specific patterns in text data
+    text := "The quick brown fox jumps over the lazy dog."
+    pattern := regexp.MustCompile("quick")
+    if pattern.MatchString(text) {
+        fmt.Println("Pattern found in text.")
+    }
 
-    // Search and Replace
-    re := regexp.MustCompile(pattern)
-    text = "Hello 123, meet 456"
-    result := re.ReplaceAllString(text, "number")
-    fmt.Println("Search and Replace:", result)  // "Hello number, meet number"
+    // Validating input forms (such as emails, phone numbers, etc.)
+    email := "user@example.com"
+    emailPattern := regexp.MustCompile(`^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$`)
+    if emailPattern.MatchString(email) {
+        fmt.Println("Email is valid.")
+    }
 
-    // String Splitting
-    text = "apple, orange; banana, grape"
-    re = regexp.MustCompile(`[ ,;]+`)
-    resultSlice := re.Split(text, -1)
-    fmt.Println("String Splitting:", resultSlice)  // ["apple", "orange", "banana", "grape"]
+    // Data scraping
+    htmlData := "<h1>Hello, World!</h1>"
+    tagPattern := regexp.MustCompile("<.*?>")
+    cleanedData := tagPattern.ReplaceAllString(htmlData, "")
+    fmt.Println("Cleaned data:", cleanedData)
 
-    // Extracting Substrings
-    log_entry := "The date is 2024-06-27"
-    re = regexp.MustCompile(`(\d{4})-(\d{2})-(\d{2})`)
-    match := re.FindStringSubmatch(log_entry)
-    fmt.Println("Extracting Substrings:", match)  // ["2024-06-27", "2024", "06", "27"]
+    // Parsing and extracting information from structured data
+    inputData := "Name: John, Age: 25, Gender: Male"
+    infoPattern := regexp.MustCompile("Name: (.*), Age: (.*), Gender: (.*)")
+    result := infoPattern.FindStringSubmatch(inputData)
+    fmt.Println("Extracted information:")
+    for i, v := range result {
+        fmt.Printf("Group %d: %s\n", i, v)
+    }
 
-    // Validation
-    email := "example@test.com"
-    pattern = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-    matched, _ = regexp.MatchString(pattern, email)
-    fmt.Println("Validation:", matched)
+    // Replacing strings that match a certain pattern with another string
+    sentence := "The cat sat on the mat."
+    replacePattern := regexp.MustCompile("cat|mat")
+    replacedSentence := replacePattern.ReplaceAllString(sentence, "dog")
+    fmt.Println("Replaced sentence:", replacedSentence)
 
-    // Removing Unwanted Characters
-    text = "Hello, World!"
-    re = regexp.MustCompile(`[^\w\s]`)  // Remove all non-alphanumeric characters
-    cleaned_text := re.ReplaceAllString(text, "")
-    fmt.Println("Removing Unwanted Characters:", cleaned_text)  // "Hello World"
+    // Tokenizing strings into smaller components
+    textToTokenize := "Hello, World!"
+    tokenizer := regexp.MustCompile(`\b\w+\b`)
+    tokens := tokenizer.FindAllString(textToTokenize, -1)
+    fmt.Println("Tokens:", tokens)
 
-    // Anchoring Searches
-    text = "The quick brown fox"
-    re = regexp.MustCompile(`\bfox\b`)  // Match 'fox' as a whole word
-    fmt.Println("Anchoring Searches:", re.MatchString(text))
-
-    // Escaping Characters
-    user_input := "some[unsafe]input"
-    escaped_input := regexp.QuoteMeta(user_input)
-    fmt.Println("Escaping Characters:", escaped_input)  // "some\[unsafe\]input"
-
-    // Conditional Matching
-    re = regexp.MustCompile(`foo(?=bar)`)  // Match 'foo' only if followed by 'bar'
-    text = "foobar and foo"
-    matches := re.FindAllString(text, -1)
-    fmt.Println("Conditional Matching:", matches)  // ["foo"]
+    // More code snippets can be added for other use cases
 }
-

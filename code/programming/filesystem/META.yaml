@@ -1,0 +1,17 @@
+aliases: filesystems directorys
+displayname: Filesystems and Directories
+operations:
+- Reading a file in a specific format and processing its contents
+- Writing data to a file or creating a new file
+- Appending data to an existing file
+- Checking if a file or directory exists
+- Listing all files and directories within a given directory
+- Deleting a file or directory
+- Moving or renaming a file or directory
+- Creating a temporary file or directory
+- Changing file permissions or ownership
+- Searching for a specific file or directory within a directory
+question: Please respond to this question only with answers, formatted as a JSON array
+  of strings. I want a basic list of common programming uses with enough detail to
+  generate code about the topic "interacting with files and directories".
+want: interacting with files and directories

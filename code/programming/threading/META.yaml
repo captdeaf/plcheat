@@ -1,0 +1,13 @@
+aliases: thread async simultaneous
+displayname: Threads and Async
+operations:
+- Improving performance by running tasks concurrently
+- Handling multiple tasks simultaneously without blocking the main program
+- Updating UI elements in response to asynchronous events
+- Processing large amounts of data in the background while the main thread remains
+  responsive
+- Performing network requests without freezing the application's user interface
+question: Please respond to this question only with answers, formatted as a JSON array
+  of strings. I want a basic list of common programming uses with enough detail to
+  generate code about the topic "threading and asynchronous execution".
+want: threading and asynchronous execution

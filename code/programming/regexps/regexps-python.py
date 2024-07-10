@@ -1,64 +1,50 @@
-# Python - regex_examples.py
 import re
 
-# Pattern Matching
-pattern = r'\d+'  # Match one or more digits
-text = "There are 123 apples"
-match = re.search(pattern, text)
-print("Pattern Matching:", "Match found!" if match else "No match found.")
+text = "This is a sample text with emails like example@gmail.com and phone numbers such as 123-456-7890."
 
-# Search and Replace
-text = "Hello 123, meet 456"
-result = re.sub(r'\d+', 'number', text)
-print("Search and Replace:", result)  # "Hello number, meet number"
+# Searching for specific patterns in text data
+pattern1 = re.compile(r'emails')
+results1 = re.findall(pattern1, text)
+print("Searching for specific patterns in text data:")
+print(results1)
 
-# String Splitting
-text = "apple, orange; banana, grape"
-result = re.split(r'[,;]', text)
-print("String Splitting:", result)  # ["apple", " orange", " banana", " grape"]
+# Validating input forms (such as emails, phone numbers, etc.)
+email = "example@gmail.com"
+phone = "123-456-7890"
+pattern2 = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+email_valid = re.match(pattern2, email)
+phone_valid = re.match(r'\d{3}-\d{3}-\d{4}', phone)
+print("Validating input forms:")
+print("Email Valid:", email_valid is not None)
+print("Phone Valid:", phone_valid is not None)
 
-# Extracting Substrings
-log_entry = "The date is 2024-06-27"
-pattern = r'(\d{4})-(\d{2})-(\d{2})'
-match = re.search(pattern, log_entry)
-if match:
-    print("Extracting Substrings:", match.groups())  # ("2024", "06", "27")
+# Data scraping
+pattern3 = re.compile(r'\d{3}-\d{3}-\d{4}')
+results3 = re.findall(pattern3, text)
+print("Data scraping:")
+print(results3)
 
-# Validation
-email = "example@test.com"
-pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-if re.match(pattern, email):
-    print("Validation: Valid email address!")
-else:
-    print("Validation: Invalid email address.")
+# Parsing and extracting information from structured data
+pattern4 = re.compile(r'(\d{3})-(\d{3})-(\d{4})')
+results4 = re.findall(pattern4, text)
+print("Parsing and extracting information:")
+print(results4)
 
-# Parsing Structured Text
-log_entry = "127.0.0.1 - - [27/Jun/2024:10:00:00 +0000] \"GET /index.html HTTP/1.1\" 200 1234"
-pattern = r'(?P<ip>\d+\.\d+\.\d+\.\d+) - - \[(?P<date>[^\]]+)\] "(?P<request>[^"]+)" (?P<status>\d+) (?P<size>\d+)'
-match = re.match(pattern, log_entry)
-if match:
-    print("Parsing Structured Text:", match.groupdict())
+# Replacing strings that match a certain pattern with another string
+pattern5 = re.compile(r'phone')
+new_text = re.sub(pattern5, 'contact', text)
+print("Replacing strings:")
+print(new_text)
 
-# Removing Unwanted Characters
-text = "Hello, World!"
-cleaned_text = re.sub(r'[^\w\s]', '', text)  # Remove all non-alphanumeric characters
-print("Removing Unwanted Characters:", cleaned_text)  # "Hello World"
+# Tokenizing strings into smaller components
+tokens = text.split()
+print("Tokenizing strings:")
+print(tokens)
 
-# Anchoring Searches
-text = "The quick brown fox"
-pattern = r'\bfox\b'  # Match 'fox' as a whole word
-match = re.search(pattern, text)
-print("Anchoring Searches:", "Found" if match else "Not Found")
+# Filtering and processing text
+filtered_text = " ".join([word for word in tokens if re.match(r'[A-Za-z]+', word)])
+print("Filtered text:")
+print(filtered_text)
 
-# Escaping Characters
-user_input = "some[unsafe]input"
-escaped_input = re.escape(user_input)
-pattern = rf'{escaped_input}'
-print("Escaping Characters:", pattern)  # "some\[unsafe\]input"
-
-# Conditional Matching
-pattern = r'foo(?=bar)'  # Match 'foo' only if followed by 'bar'
-text = "foobar and foo"
-matches = re.findall(pattern, text)
-print("Conditional Matching:", matches)  # ["foo"]
+# Other uses can be added as needed
 

@@ -1,50 +1,91 @@
-// JavaScript - regex_examples.js
+// Importing the core module for regular expressions
+const fs = require('fs');
 
-// Pattern Matching
-let pattern = /\d+/;  // Match one or more digits
-let text = "There are 123 apples";
-console.log("Pattern Matching:", pattern.test(text) ? "Match found!" : "No match found.");
+// Text data for demonstration
+const textData = "Hello, my email is test@example.com and my phone number is 123-456-7890. Please contact me.";
 
-// Search and Replace
-text = "Hello 123, meet 456";
-let result = text.replace(/\d+/g, 'number');
-console.log("Search and Replace:", result);  // "Hello number, meet number"
+// Searching for specific patterns in text data
+const emailRegex = /[\w-]+@([\w-]+\.)+[\w-]+/;
+const emailMatch = textData.match(emailRegex);
+console.log(emailMatch);
 
-// String Splitting
-text = "apple, orange; banana, grape";
-result = text.split(/[,;]/);
-console.log("String Splitting:", result);  // ["apple", " orange", " banana", " grape"]
+// Validating input forms (such as emails, phone numbers, etc.)
+const phoneRegex = /\d{3}-\d{3}-\d{4}/;
+const phoneValidation = phoneRegex.test(textData);
+console.log(phoneValidation);
 
-// Extracting Substrings
-text = "The date is 2024-06-27";
-pattern = /(\d{4})-(\d{2})-(\d{2})/;
-let match = text.match(pattern);
-console.log("Extracting Substrings:", match ? match.slice(1) : "No match found");  // ["2024", "06", "27"]
+// Data scraping
+// Assuming scraping logic for extracting specific data
 
-// Validation
-let email = "example@test.com";
-pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-console.log("Validation:", pattern.test(email) ? "Valid email address!" : "Invalid email address.");
+// Parsing and extracting information from structured data
+const phoneDetails = textData.match(/\d{3}-\d{3}-\d{4}/);
+console.log(phoneDetails[0]);
 
-// Removing Unwanted Characters
-text = "Hello, World!";
-let cleanedText = text.replace(/[^\w\s]/g, '');  // Remove all non-alphanumeric characters
-console.log("Removing Unwanted Characters:", cleanedText);  // "Hello World"
+// Replacing strings that match a certain pattern with another string
+const replacedText = textData.replace(/contact/g, "reach out to");
+console.log(replacedText);
 
-// Anchoring Searches
-text = "The quick brown fox";
-pattern = /\bfox\b/;  // Match 'fox' as a whole word
-console.log("Anchoring Searches:", pattern.test(text) ? "Found" : "Not Found");
+// Tokenizing strings into smaller components
+const tokens = textData.split(/\W+/);
+console.log(tokens);
 
-// Escaping Characters
-user_input = "some[unsafe]input";
-let escaped_input = user_input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-pattern = new RegExp(escaped_input);
-console.log("Escaping Characters:", pattern);  // /some\[unsafe\]input/
+// Filtering and processing text
+const filteredData = textData.replace(/is/g, "");
+console.log(filteredData);
 
-// Conditional Matching
-pattern = /foo(?=bar)/;  // Match 'foo' only if followed by 'bar'
-text = "foobar and foo";
-matches = text.match(pattern);
-console.log("Conditional Matching:", matches);  // ["foo"]
+// Pattern matching in search algorithms
+// Assuming an algorithm using regular expressions for pattern matching
 
+// Checking for the presence of specific characters or words
+const specificWord = /phone/;
+console.log(specificWord.test(textData));
+
+// Text manipulation and transformation
+const transformedText = textData.toUpperCase();
+console.log(transformedText);
+
+// Input sanitization
+const sanitizedData = textData.replace(/[^\w\s]/gi, '');
+console.log(sanitizedData);
+
+// Pattern-based data extraction
+// Assuming pattern extraction logic based on regular expressions
+
+// Syntax highlighting in text editors or IDEs
+// Assuming implementation for highlighting syntax with regular expressions
+
+// Data validation in form submission
+const formValidation = emailRegex.test("invalid-email");
+console.log(formValidation);
+
+// Extracting data from log files or other text-based records
+// Assuming data extraction logic from log files using regular expressions
+
+// Pattern matching in natural language processing tasks
+// Assuming NLP tasks that involve regular expressions pattern matching
+
+// Data cleaning and preprocessing
+const cleanedData = textData.replace(/[\-\d]/g, "");
+console.log(cleanedData);
+
+// Automating repetitive text processing tasks
+// Assume automation script incorporating regular expressions
+
+// Generating reports or summaries based on text patterns
+// Assume report generation logic based on text patterns
+
+// Customizing search functionality in web applications
+// Assume search customization logic using regular expressions
+
+// Validating and formatting user input
+const formattedInput = "123 456 7890".replace(/(\d{3}) (\d{3}) (\d{4})/, '$1-$2-$3');
+console.log(formattedInput);
+
+// Parsing URLs and query parameters
+const url = "https://www.example.com/search?q=keyword";
+const queryParam = url.match(/q=([^&]+)/)[1];
+console.log(queryParam);
+
+// Implementing text-based search functionality
+// Assume text-based search logic using regular expressions
+```

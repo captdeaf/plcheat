@@ -1,0 +1,21 @@
+aliases: strings texts
+displayname: Strings and Texts
+operations:
+  - Concatenating two strings together to create a longer string
+  - Splitting a string into an array of substrings based on a delimiter
+  - Replacing a specific substring with another substring within a larger string
+  - Removing leading and trailing whitespace from a string
+  - Converting a string to uppercase or lowercase
+  - Checking if a string contains a certain substring
+  - Finding the index of a specific substring within a larger string
+  - Getting the length of a string
+  - Reversing a string
+  - Formatting a string with placeholders for variables
+  - Parsing and manipulating data stored in a string format (such as JSON or XML)
+  - Generating a string representation of an object for debugging or logging
+  - Validating and sanitizing user input received as strings
+  - Implementing algorithms like string matching, searching, or sorting
+question: Please respond only with answers, formatted as a yaml array of descriptions.I
+  want a fairly comprehensive list of common programming uses with enough detail to
+  generate code about the topic "working with strings".
+want: working with strings

@@ -1,0 +1,5 @@
+displayname: Python
+ext: py
+css: python
+categories: programming
+openai: Please exclude 3rd party libraries such as numpy and others.

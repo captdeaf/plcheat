@@ -1,134 +1,129 @@
--- 1. Storing Data
-data = {1, 2, 3, 4, 5}
-print("Original Data:")
-for i = 1, #data do
-    io.write(data[i], " ")
-end
-print()
+-- Storing a collection of elements of the same data type
+myArray = {1, 2, 3, 4, 5}
 
--- 2. Mathematical Operations
-squared_data = {}
-for i = 1, #data do
-    squared_data[i] = data[i] * data[i]
-end
-print("Squared Data:")
-for i = 1, #squared_data do
-    io.write(squared_data[i], " ")
-end
-print()
+-- Accessing individual elements via index
+print(myArray[3])
 
--- 3. Sorting and Searching
-table.sort(data)
-print("Sorted Data:")
-for i = 1, #data do
-    io.write(data[i], " ")
+-- Iterating over elements using loops
+for i = 1, #myArray do
+    print(myArray[i])
 end
-print()
 
-search_value = 3
-search_index = -1
-for i = 1, #data do
-    if data[i] == search_value then
-        search_index = i
+-- Sorting elements in ascending order
+table.sort(myArray)
+
+-- Searching for a specific element within the array
+local searchValue = 3
+for i = 1, #myArray do
+    if myArray[i] == searchValue then
+        print("Element found at index: " .. i)
         break
     end
 end
-print("Index of " .. search_value .. ": " .. search_index)
 
--- 4. Data Analysis
-sum_value = 0
-for i = 1, #data do
-    sum_value = sum_value + data[i]
+-- Modifying elements at specific positions
+myArray[2] = 10
+
+-- Adding elements to the end of the array
+table.insert(myArray, 6)
+
+-- Removing elements from the array
+table.remove(myArray, 3)
+
+-- Merging two arrays into a single array
+secondArray = {7, 8, 9}
+for i = 1, #secondArray do
+    table.insert(myArray, secondArray[i])
 end
-mean_value = sum_value / #data
-print("Mean Value: " .. mean_value)
-print("Sum Value: " .. sum_value)
 
--- 5. Multidimensional Arrays
-matrix = {
+-- Splitting an array into multiple smaller arrays
+size = 3
+for i = 1, #myArray, size do
+    local subArray = {}
+    for j = i, math.min(i + size - 1, #myArray) do
+        table.insert(subArray, myArray[j])
+    end
+    print("Split Array:")
+    for j = 1, #subArray do
+        print(subArray[j])
+    end
+end
+
+-- Finding the maximum element in the array
+local maxElement = math.max(table.unpack(myArray))
+
+-- Filtering elements based on a condition
+local filteredArray = {}
+for i = 1, #myArray do
+    if myArray[i] > 4 then
+        table.insert(filteredArray, myArray[i])
+    end
+end
+
+-- Mapping elements to a new value
+for i = 1, #myArray do
+    myArray[i] = myArray[i] * 2
+end
+
+-- Reversing the order of elements in the array
+for i = 1, math.floor(#myArray / 2) do
+    myArray[i], myArray[#myArray - i + 1] = myArray[#myArray - i + 1], myArray[i]
+end
+
+-- Calculating the sum of array elements
+local sum = 0
+for i = 1, #myArray do
+    sum = sum + myArray[i]
+end
+
+-- Copying elements from one array to another
+copiedArray = {}
+for i = 1, #myArray do
+    table.insert(copiedArray, myArray[i])
+end
+
+-- Checking if an array contains a certain element
+local elementToCheck = 8
+local found = false
+for i = 1, #myArray do
+    if myArray[i] == elementToCheck then
+        found = true
+        break
+    end
+end
+
+-- Converting an array to a string
+local arrayString = table.concat(myArray, ", ")
+
+-- Creating multi-dimensional arrays for complex data structures
+multiArray = {
     {1, 2, 3},
     {4, 5, 6},
     {7, 8, 9}
 }
-print("Original Matrix:")
-for i = 1, #matrix do
-    for j = 1, #matrix[i] do
-        io.write(matrix[i][j], " ")
-    end
-    print()
-end
 
--- Transpose the matrix
-transposed_matrix = {}
-for i = 1, #matrix[1] do
-    transposed_matrix[i] = {}
-    for j = 1, #matrix do
-        transposed_matrix[i][j] = matrix[j][i]
-    end
-end
-print("Transposed Matrix:")
-for i = 1, #transposed_matrix do
-    for j = 1, #transposed_matrix[i] do
-        io.write(transposed_matrix[i][j], " ")
-    end
-    print()
-end
-
--- Example of matrix multiplication (identity matrix)
-identity_matrix = {
-    {1, 0, 0},
-    {0, 1, 0},
-    {0, 0, 1}
-}
-product_matrix = {}
-for i = 1, #matrix do
-    product_matrix[i] = {}
-    for j = 1, #identity_matrix[1] do
-        sum = 0
-        for k = 1, #identity_matrix do
-            sum = sum + matrix[i][k] * identity_matrix[k][j]
+-- Implementing algorithms like binary search or quicksort using arrays (Binary Search example)
+local function binarySearch(array, element)
+    local low = 1
+    local high = #array
+    while low <= high do
+        local mid = math.floor((low + high) / 2)
+        if array[mid] == element then
+            return mid
+        elseif array[mid] < element then
+            low = mid + 1
+        else
+            high = mid - 1
         end
-        product_matrix[i][j] = sum
     end
-end
-print("Matrix Product with Identity Matrix:")
-for i = 1, #product_matrix do
-    for j = 1, #product_matrix[i] do
-        io.write(product_matrix[i][j], " ")
-    end
-    print()
+    return -1
 end
 
--- Image Processing (simulated with a simple 2D array)
-math.randomseed(os.time())
-image = {}
-for i = 1, 5 do
-    image[i] = {}
-    for j = 1, 5 do
-        image[i][j] = math.random()
-    end
+-- Testing binary search
+table.sort(myArray)
+local index = binarySearch(myArray, 6)
+if index ~= -1 then
+    print("Element found at index: " .. index)
+else
+    print("Element not found")
 end
-print("Original Image:")
-for i = 1, #image do
-    for j = 1, #image[i] do
-        io.write(string.format("%.2f", image[i][j]), " ")
-    end
-    print()
-end
-
--- Simple operation on image
-brighter_image = {}
-for i = 1, #image do
-    brighter_image[i] = {}
-    for j = 1, #image[i] do
-        brighter_image[i][j] = image[i][j] * 1.2
-    end
-end
-print("Brighter Image:")
-for i = 1, #brighter_image do
-    for j = 1, #brighter_image[i] do
-        io.write(string.format("%.2f", brighter_image[i][j]), " ")
-    end
-    print()
-end
-

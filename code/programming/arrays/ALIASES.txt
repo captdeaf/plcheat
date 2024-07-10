@@ -1,4 +1,0 @@
-Arrays
-list
-ordered
-vector

@@ -1,8 +1,8 @@
-# generate.py
+# rebuild.py
 #
-# Regenerate the JSON for all the snippets.
+# Rebuild the JSON for all the categories, languages, and snippets.
 #
-# Bandwidth and space is cheap. Caches are great. We'll just shove everything
+# Bandwidth and space are cheap. Caches are great. We'll just shove everything
 # into one .js file.
 #
 # The expected output:

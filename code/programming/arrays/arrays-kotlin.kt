@@ -1,63 +1,74 @@
 fun main() {
-    // 1. Storing Data
-    val data = listOf(1, 2, 3, 4, 5)
-    println("Original Data: $data")
+    val numbers = arrayOf(4, 13, 7, 21, 16)
 
-    // 2. Mathematical Operations
-    val squaredData = data.map { it * it }
-    println("Squared Data: $squaredData")
+    // Accessing individual elements via index
+    val elementAtIndex2 = numbers[2]
+    println("Element at index 2: $elementAtIndex2")
 
-    // 3. Sorting and Searching
-    val sortedData = data.sorted()
-    println("Sorted Data: $sortedData")
-
-    val searchValue = 3
-    val searchIndex = data.indexOf(searchValue)
-    println("Index of $searchValue: $searchIndex")
-
-    // 4. Data Analysis
-    val meanValue = data.average()
-    println("Mean Value: $meanValue")
-
-    val sumValue = data.sum()
-    println("Sum Value: $sumValue")
-
-    // 5. Multidimensional Arrays
-    val matrix = listOf(
-        listOf(1, 2, 3),
-        listOf(4, 5, 6),
-        listOf(7, 8, 9)
-    )
-    println("Original Matrix:")
-    matrix.forEach { println(it) }
-
-    // Transpose the matrix
-    val transposedMatrix = List(matrix[0].size) { i -> List(matrix.size) { j -> matrix[j][i] } }
-    println("Transposed Matrix:")
-    transposedMatrix.forEach { println(it) }
-
-    // Example of matrix multiplication (identity matrix)
-    val identityMatrix = listOf(
-        listOf(1, 0, 0),
-        listOf(0, 1, 0),
-        listOf(0, 0, 1)
-    )
-    val productMatrix = matrix.map { row ->
-        List(identityMatrix[0].size) { col ->
-            row.indices.sumOf { row[it] * identityMatrix[it][col] }
-        }
+    // Iterating over elements using loops
+    for (number in numbers) {
+        println(number)
     }
-    println("Matrix Product with Identity Matrix:")
-    productMatrix.forEach { println(it) }
 
-    // Image Processing (simulated with a simple 2D array)
-    val image = List(5) { List(5) { kotlin.random.Random.nextDouble() } }
-    println("Original Image:")
-    image.forEach { row -> println(row.joinToString(" ") { "%.2f".format(it) }) }
+    // Sorting elements in ascending order
+    val sortedNumbers = numbers.sorted()
+    println("Sorted numbers: $sortedNumbers")
 
-    // Simple operation on image
-    val brighterImage = image.map { row -> row.map { it * 1.2 } }
-    println("Brighter Image:")
-    brighterImage.forEach { row -> println(row.joinToString(" ") { "%.2f".format(it) }) }
+    // Searching for a specific element within the array
+    val numberToFind = 7
+    val index = numbers.indexOf(numberToFind)
+    if (index != -1) {
+        println("$numberToFind found at index $index")
+    } else {
+        println("$numberToFind not found")
+    }
+
+    // Modifying elements at specific positions
+    numbers[3] = 100
+    println("Modified array: ${numbers.joinToString()}")
+
+    // Adding elements to the end of the array
+    numbers += 5
+    println("Array after adding 5: ${numbers.joinToString()}")
+
+    // Removing elements from the array
+    numbers.drop(2)
+    println("Array after removing first 2 elements: ${numbers.joinToString()}")
+
+    // Merging two arrays into a single array
+    val moreNumbers = arrayOf(3, 8)
+    val mergedArray = numbers + moreNumbers
+    println("Merged array: ${mergedArray.joinToString()}")
+
+    // Splitting an array into multiple smaller arrays
+    val chunkedArrays = numbers.chunked(2)
+    println("Chunked arrays: $chunkedArrays")
+
+    // Finding the maximum element in the array
+    val maxNumber = numbers.maxOrNull()
+    println("Max number: $maxNumber")
+
+    // Filtering elements based on a condition
+    val filteredNumbers = numbers.filter { it % 2 == 0 }
+    println("Filtered numbers (even): $filteredNumbers")
+
+    // Mapping elements to a new value
+    val doubledNumbers = numbers.map { it * 2 }
+    println("Doubled numbers: ${doubledNumbers.joinToString()}")
+
+    // Reversing the order of elements in the array
+    val reversedArray = numbers.reversed()
+    println("Reversed array: ${reversedArray.joinToString()}")
+
+    // Calculating the sum of array elements
+    val sum = numbers.sum()
+    println("Sum of array elements: $sum")
+
+    // Checking if an array contains a certain element
+    val containsSeven = numbers.contains(7)
+    println("Array contains 7: $containsSeven")
+
+    // Converting an array to a string
+    val numbersString = numbers.joinToString(separator = ", ", prefix = "[", postfix = "]")
+    println("Array as string: $numbersString")
 }
-

@@ -1,59 +1,114 @@
-fn main() {
-    // 1. Storing Data
-    let data = vec![1, 2, 3, 4, 5];
-    println!("Original Data: {:?}", data);
+package main
 
-    // 2. Mathematical Operations
-    let squared_data: Vec<i32> = data.iter().map(|&x| x * x).collect();
-    println!("Squared Data: {:?}", squared_data);
+import (
+	"fmt"
+	"sort"
+)
 
-    // 3. Sorting and Searching
-    let mut sorted_data = data.clone();
-    sorted_data.sort();
-    println!("Sorted Data: {:?}", sorted_data);
+func main() {
+	// Storing a collection of elements of the same data type
+	numbers := []int{1, 2, 3, 4, 5}
 
-    let search_value = 3;
-    if let Some(search_index) = data.iter().position(|&x| x == search_value) {
-        println!("Index of {}: {}", search_value, search_index);
-    }
+	// Accessing individual elements via index
+	fmt.Println(numbers[0])
 
-    // 4. Data Analysis
-    let sum_value: i32 = data.iter().sum();
-    let mean_value = sum_value as f64 / data.len() as f64;
-    println!("Mean Value: {}", mean_value);
-    println!("Sum Value: {}", sum_value);
+	// Iterating over elements using loops
+	for i := 0; i < len(numbers); i++ {
+		fmt.Println(numbers[i])
+	}
 
-    // 5. Multidimensional Arrays
-    let matrix: Vec<Vec<i32>> = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
-    println!("Original Matrix: {:?}", matrix);
+	// Sorting elements in ascending order
+	sort.Ints(numbers)
+	fmt.Println(numbers)
 
-    let transposed_matrix: Vec<Vec<i32>> = (0..matrix[0].len())
-        .map(|i| matrix.iter().map(|row| row[i]).collect())
-        .collect();
-    println!("Transposed Matrix: {:?}", transposed_matrix);
+	// Searching for a specific element within the array
+	searchElement := 3
+	for i := 0; i < len(numbers); i++ {
+		if numbers[i] == searchElement {
+			fmt.Printf("%d found at index %d\n", searchElement, i)
+			break
+		}
+	}
 
-    // Example of matrix multiplication (identity matrix)
-    let identity_matrix: Vec<Vec<i32>> = vec![vec![1, 0, 0], vec![0, 1, 0], vec![0, 0, 1]];
-    let product_matrix: Vec<Vec<i32>> = matrix
-        .iter()
-        .map(|row| {
-            row.iter()
-                .enumerate()
-                .map(|(i, &val)| val * identity_matrix[i][i])
-                .collect()
-        })
-        .collect();
-    println!("Matrix Product with Identity Matrix: {:?}", product_matrix);
+	// Modifying elements at specific positions
+	numbers[2] = 10
+	fmt.Println(numbers)
 
-    // Image Processing (simulated with a simple 2D array)
-    let image: Vec<Vec<f64>> = (0..5).map(|_| (0..5).map(|_| rand::random()).collect()).collect();
-    println!("Original Image: {:?}", image);
+	// Adding elements to the end of the array
+	numbers = append(numbers, 6)
+	fmt.Println(numbers)
 
-    // Simple operation on image
-    let brighter_image: Vec<Vec<f64>> = image
-        .iter()
-        .map(|row| row.iter().map(|&pixel| pixel * 1.2).collect())
-        .collect();
-    println!("Brighter Image: {:?}", brighter_image);
+	// Removing elements from the array
+	indexToRemove := 1
+	numbers = append(numbers[:indexToRemove], numbers[indexToRemove+1:]...)
+	fmt.Println(numbers)
+
+	// Merging two arrays into a single array
+	otherNumbers := []int{7, 8, 9}
+	numbers = append(numbers, otherNumbers...)
+	fmt.Println(numbers)
+
+	// Splitting an array into multiple smaller arrays
+	chunkSize := 2
+	for i := 0; i < len(numbers); i += chunkSize {
+		fmt.Println(numbers[i : i+chunkSize])
+	}
+
+	// Finding the maximum element in the array
+	max := numbers[0]
+	for _, num := range numbers {
+		if num > max {
+			max = num
+		}
+	}
+	fmt.Println("Max element:", max)
+
+	// Filtering elements based on a condition
+	filteredNumbers := []int{}
+	for _, num := range numbers {
+		if num%2 == 0 {
+			filteredNumbers = append(filteredNumbers, num)
+		}
+	}
+	fmt.Println("Filtered numbers:", filteredNumbers)
+
+	// Mapping elements to a new value
+	for i, num := range numbers {
+		numbers[i] = num * 2
+	}
+	fmt.Println(numbers)
+
+	// Reversing the order of elements in the array
+	reversedNumbers := []int{}
+	for i := len(numbers) - 1; i >= 0; i-- {
+		reversedNumbers = append(reversedNumbers, numbers[i])
+	}
+	fmt.Println("Reversed numbers:", reversedNumbers)
+
+	// Calculating the sum of array elements
+	sum := 0
+	for _, num := range numbers {
+		sum += num
+	}
+	fmt.Println("Sum:", sum)
+
+	// Copying elements from one array to another
+	copiedNumbers := make([]int, len(numbers))
+	copy(copiedNumbers, numbers)
+	fmt.Println("Copied numbers:", copiedNumbers)
+
+	// Checking if an array contains a certain element
+	elementToCheck := 4
+	found := false
+	for _, num := range numbers {
+		if num == elementToCheck {
+			found = true
+			break
+		}
+	}
+	fmt.Println("Element found:", found)
+
+	// Converting an array to a string
+	str := fmt.Sprint(numbers)
+	fmt.Println("Array as string:", str)
 }
-

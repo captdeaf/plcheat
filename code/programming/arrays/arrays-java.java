@@ -1,86 +1,96 @@
 import java.util.Arrays;
-import java.util.Random;
 
-public class Main {
+public class ArrayExamples {
+
     public static void main(String[] args) {
-        // 1. Storing Data
-        int[] data = {1, 2, 3, 4, 5};
-        System.out.println("Original Data: " + Arrays.toString(data));
+        // Storing a collection of elements of the same data type
+        int[] intArray = {4, 6, 2, 8, 1};
 
-        // 2. Mathematical Operations
-        int[] squared_data = Arrays.stream(data).map(x -> x * x).toArray();
-        System.out.println("Squared Data: " + Arrays.toString(squared_data));
+        // Accessing individual elements via index
+        int elementAtIndexTwo = intArray[2];
 
-        // 3. Sorting and Searching
-        int[] sorted_data = Arrays.copyOf(data, data.length);
-        Arrays.sort(sorted_data);
-        System.out.println("Sorted Data: " + Arrays.toString(sorted_data));
-
-        int search_value = 3;
-        int search_index = Arrays.binarySearch(data, search_value);
-        System.out.println("Index of " + search_value + ": " + search_index);
-
-        // 4. Data Analysis
-        double mean_value = Arrays.stream(data).average().orElse(0);
-        System.out.println("Mean Value: " + mean_value);
-
-        int sum_value = Arrays.stream(data).sum();
-        System.out.println("Sum Value: " + sum_value);
-
-        // 5. Multidimensional Arrays
-        int[][] matrix = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-        System.out.println("Original Matrix: " + Arrays.deepToString(matrix));
-
-        int[][] transposed_matrix = transpose(matrix);
-        System.out.println("Transposed Matrix: " + Arrays.deepToString(transposed_matrix));
-
-        // Example of matrix multiplication (identity matrix)
-        int[][] identity_matrix = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-        int[][] product_matrix = multiply(matrix, identity_matrix);
-        System.out.println("Matrix Product with Identity Matrix: " + Arrays.deepToString(product_matrix));
-
-        // Image Processing (simulated with a simple 2D array)
-        double[][] image = new double[5][5];
-        Random random = new Random();
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                image[i][j] = random.nextDouble();
-            }
+        // Iterating over elements using loops
+        for (int i = 0; i < intArray.length; i++) {
+            System.out.println(intArray[i]);
         }
-        System.out.println("Original Image: " + Arrays.deepToString(image));
 
-        // Simple operation on image
-        double[][] brighter_image = new double[5][5];
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                brighter_image[i][j] = image[i][j] * 1.2;
-            }
-        }
-        System.out.println("Brighter Image: " + Arrays.deepToString(brighter_image));
-    }
+        // Sorting elements in ascending order
+        Arrays.sort(intArray);
 
-    public static int[][] transpose(int[][] matrix) {
-        int[][] transposed = new int[matrix[0].length][matrix.length];
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                transposed[j][i] = matrix[i][j];
-            }
-        }
-        return transposed;
-    }
+        // Searching for a specific element within the array
+        int indexOfElement = Arrays.binarySearch(intArray, 6);
 
-    public static int[][] multiply(int[][] a, int[][] b) {
-        int[][] product = new int[a.length][b[0].length];
-        for (int i = 0; i < a.length; i++) {
-            for (int j = 0; j < b[0].length; j++) {
-                int sum = 0;
-                for (int k = 0; k < a[i].length; k++) {
-                    sum += a[i][k] * b[k][j];
-                }
-                product[i][j] = sum;
-            }
+        // Modifying elements at specific positions
+        intArray[3] = 10;
+
+        // Adding elements to the end of the array
+        int[] newArray = Arrays.copyOf(intArray, intArray.length + 1);
+        newArray[newArray.length - 1] = 5;
+
+        // Removing elements from the array
+        int[] smallerArray = Arrays.copyOfRange(intArray, 0, intArray.length - 1);
+        
+        // Merging two arrays into a single array
+        int[] secondArray = {3, 7, 9};
+        int[] mergedArray = new int[intArray.length + secondArray.length];
+        System.arraycopy(intArray, 0, mergedArray, 0, intArray.length);
+        System.arraycopy(secondArray, 0, mergedArray, intArray.length, secondArray.length);
+
+        // Splitting an array into multiple smaller arrays
+        int[][] splitArrays = {Arrays.copyOfRange(intArray, 0, 2), Arrays.copyOfRange(intArray, 2, intArray.length)};
+
+        // Finding the maximum element in the array
+        int maxElement = Arrays.stream(intArray).max().getAsInt();
+
+        // Filtering elements based on a condition
+        int[] filteredArray = Arrays.stream(intArray).filter(x -> x > 5).toArray();
+
+        // Mapping elements to a new value
+        int[] mappedArray = Arrays.stream(intArray).map(x -> x * 2).toArray();
+
+        // Reversing the order of elements in the array
+        int[] reversedArray = new int[intArray.length];
+        for (int i = 0; i < intArray.length; i++) {
+            reversedArray[i] = intArray[intArray.length - 1 - i];
         }
-        return product;
+
+        // Calculating the sum of array elements
+        int sum = Arrays.stream(intArray).sum();
+
+        // Copying elements from one array to another
+        int[] copiedArray = Arrays.copyOf(intArray, intArray.length);
+
+        // Checking if an array contains a certain element
+        boolean containsElement = Arrays.stream(intArray).anyMatch(x -> x == 2);
+
+        // Converting an array to a string
+        String arrayAsString = Arrays.toString(intArray);
+
+        // Creating multi-dimensional arrays for complex data structures
+        int[][] multiDimArray = new int[3][3];
+
+        // Implementing binary search using arrays
+        int searchValue = 6;
+        int binaryIndex = Arrays.binarySearch(intArray, searchValue);
+
+        // Print outputs for verification
+        System.out.println("Element at index 2: " + elementAtIndexTwo);
+        System.out.println("Sorted Array: " + Arrays.toString(intArray));
+        System.out.println("Index of element 6: " + indexOfElement);
+        System.out.println("Modified Array: " + Arrays.toString(intArray));
+        System.out.println("New Array with added element: " + Arrays.toString(newArray));
+        System.out.println("Smaller Array: " + Arrays.toString(smallerArray));
+        System.out.println("Merged Array: " + Arrays.toString(mergedArray));
+        System.out.println("Split Arrays: " + Arrays.deepToString(splitArrays));
+        System.out.println("Max Element: " + maxElement);
+        System.out.println("Filtered Array: " + Arrays.toString(filteredArray));
+        System.out.println("Mapped Array: " + Arrays.toString(mappedArray));
+        System.out.println("Reversed Array: " + Arrays.toString(reversedArray));
+        System.out.println("Sum of Array: " + sum);
+        System.out.println("Copied Array: " + Arrays.toString(copiedArray));
+        System.out.println("Array contains element 2: " + containsElement);
+        System.out.println("Array as String: " + arrayAsString);
+        System.out.println("Multi-dimensional Array: " + Arrays.deepToString(multiDimArray));
+        System.out.println("Index of element 6 (Binary Search): " + binaryIndex);
     }
 }
-

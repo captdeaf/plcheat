@@ -1,0 +1,27 @@
+aliases: list ordered
+displayname: Arrays
+operations:
+- Storing a collection of elements of the same data type
+- Accessing individual elements via index
+- Iterating over elements using loops
+- Sorting elements in ascending or descending order
+- Searching for a specific element within the array
+- Modifying elements at specific positions
+- Adding elements to the end of the array
+- Removing elements from the array
+- Merging two arrays into a single array
+- Splitting an array into multiple smaller arrays
+- Finding the maximum or minimum element in the array
+- Filtering elements based on a condition
+- Mapping elements to a new value
+- Reversing the order of elements in the array
+- Calculating the sum or average of array elements
+- Copying elements from one array to another
+- Checking if an array contains a certain element
+- Converting an array to a string or vice versa
+- Creating multi-dimensional arrays for complex data structures
+- Implementing algorithms like binary search or quicksort using arrays
+question: Please respond to this question only with answers, formatted as a JSON array of strings.
+  I want a fairly comprehensive list of common programming uses with enough detail
+  to generate code about the topic "arrays".
+want: arrays

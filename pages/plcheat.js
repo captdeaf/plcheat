@@ -137,26 +137,26 @@ function bestMatch(searches, targets, isAdvanced) {
       //   2) Unmatched words / "rest" (So shorter is better)
       for (const searchWord of Object.keys(searchWanted)) {
         let found = false;
-        for (const word of target.dataset.aliases.split(' ')) {
+        for (const word of normalize(target.innerText)) {
           if (isMatch(searchWord, word)) {
-            cur.score += 2;
+            cur.score += 1;
             found = true;
+            cur.matches.push(word);
+            cur.partialMatches.push(searchWord);
             delete searchWanted[searchWord];
+            break;
+          }
+          if (word.length > 3) {
+            // Don't add to rest on "is", "the", "a", "and", etc.
+            cur.rest += 1;
           }
         }
         if (!found) {
-          for (const word of normalize(target.innerText)) {
+          for (const word of target.dataset.aliases.split(' ')) {
             if (isMatch(searchWord, word)) {
               cur.score += 1;
               found = true;
-              cur.matches.push(word);
-              cur.partialMatches.push(searchWord);
               delete searchWanted[searchWord];
-              break;
-            }
-            if (word.length > 3) {
-              // Don't add to rest on "is", "the", "a", "and", etc.
-              cur.rest += 1;
             }
           }
         }
@@ -178,11 +178,13 @@ function bestMatch(searches, targets, isAdvanced) {
     }
     if (best.score >= 2 || best.rest < 3) break;
   }
-  for (const cur of oks) {
-    if (cur.score === best.score && cur.rest === best.rest) {
-      highlightMatches(cur, 'match-good');
-    } else {
-      highlightMatches(cur, 'match-ok');
+  if (isAdvanced) {
+    for (const cur of oks) {
+      if (cur.score === best.score && cur.rest === best.rest) {
+        highlightMatches(cur, 'match-good');
+      } else {
+        highlightMatches(cur, 'match-ok');
+      }
     }
   }
   if (best.score >= 1 || best.rest == 0) {

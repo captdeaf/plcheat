@@ -6,8 +6,7 @@ import html
 from glob import glob
 import os
 import re
-import json
-import time
+import yaml
 
 
 def readfile(filepath, strip=True, split=False):
@@ -19,6 +18,38 @@ def readfile(filepath, strip=True, split=False):
         if split:
             return body.splitlines()
         return body
+
+class HasMeta(object):
+    def add_meta(self, metakey, value):
+        if not hasattr(self, 'metadata'):
+            self.metadata = dict()
+        self.metadata[metakey] = value
+        setattr(self, metakey, value)
+
+    def save_meta(self, filepath=None):
+        if not filepath:
+            filepath = self.filepath
+        if "yaml" not in filepath:
+            filepath = f"{filepath}/META.yaml"
+        dirname = os.path.dirname(filepath)
+        if not os.path.isdir(dirname):
+            os.mkdir(dirname)
+
+        with open(filepath, 'w', encoding='utf-8') as fout:
+            fout.write(yaml.dump(self.metadata))
+
+    def load_meta(self, filepath):
+        if "yaml" not in filepath:
+            filepath = f"{filepath}/META.yaml"
+        if not os.path.exists(filepath):
+            self.metadata = dict()
+            return
+
+        metabody = readfile(filepath, strip=False, split=False)
+        self.metadata = yaml.safe_load(metabody)
+
+        for k, v in self.metadata.items():
+            setattr(self, k, v)
 
 
 # os.path.basename gets confused with trailing /s
@@ -32,7 +63,7 @@ def basename(filepath):
     return basename
 
 
-class Language(object):
+class Language(HasMeta):
     """
     Languages: (code/<category>/LANGS/*.txt)
     Languages have: (example)
@@ -47,20 +78,18 @@ class Language(object):
         fileio: (body of file)
     """
 
-    kvrx = re.compile(r'(\w+):\s*(.*?)\s*$')
+    dict_ignore = ['commentre', 'description', 'filepath', 'metadata']
+
     def __init__(self, filepath):
         self.name = basename(filepath)
+        self.filepath = filepath
 
         lines = readfile(filepath, split=True)
         self.displayname = lines.pop(0)
         self.comment = '#|//'
 
-        while len(lines) > 0 and (line := lines.pop(0)) != "":
-            m = self.kvrx.match(line)
-            if m:
-                setattr(self, m[1], m[2])
+        self.load_meta(filepath)
 
-        self.description = "\n".join(lines)
         self.commentre = re.compile(f"^\\s*(?:{self.comment})\\s+(.*)$")
 
         # snippets: a dict of (category: dict(topic: <file>))
@@ -71,9 +100,8 @@ class Language(object):
         return [re.sub(r'[^a-z]+', '', word.lower().strip()) for word in words.split()]
 
 
-    def add_snippet(self, topic, path):
-        with open(path, 'r', encoding="utf-8") as fin:
-            self.snippets[topic] = fin.read()
+    def add_snippet(self, topic, snippet):
+        self.snippets[topic] = snippet
 
     def populate_tags(self, category, htmlcode):
         """
@@ -115,56 +143,92 @@ class Language(object):
             code = html.escape(code)
             self.snippets[topic] = code
 
-    dict_ignore = ['commentre', 'description']
 
+class Topic(HasMeta):
 
-class Category(object):
+    dict_ignore = ['filepath', 'metadata', 'category', 'snippets']
 
-    def __init__(self, directory, snippets=False):
+    def __init__(self, category, directory):
+        self.filepath = directory
+        self.category = category
+        self.name = basename(directory)
+        self.displayname = self.name
+        self.snippets = dict()
+
+        # Update as needed.
+        self.load_meta(directory)
+
+    def add_snippet(self, lang, snippet):
+        self.snippets[lang] = snippet
+
+class Category(HasMeta):
+
+    dict_ignore = ['filepath', 'metadata']
+
+    def __init__(self, directory):
+        self.filepath = directory
         self.name = basename(directory)
         self.languages = dict()
         self.topics = dict()
 
-        for file in glob(f"{directory}/LANGS/*.txt"):
+        self.load_meta(directory)
+
+        for file in glob(f"{directory}/LANGS/*.yaml"):
             language = Language(file)
             self.languages[language.name] = language
 
-        print(f"Category {directory} with {len(self.languages)} languages.")
+    def new_topic(self, topicname):
+        print(f" topic path: {self.filepath}/{topicname}")
+        return Topic(self, f"{self.filepath}/{topicname}")
 
-        self.displayname = readfile(f"{directory}/INFO.txt", split=True)[0]
 
-        for path in glob(f"{directory}/*"):
+    def read_topics(self, snippets=False):
+        count = 0
+        for path in glob(f"{self.filepath}/*"):
             if os.path.isdir(path) and path.islower():
-                self.read_topic(path, snippets=snippets)
+                count += self.read_topic(path, snippets=snippets)
+
+        return count
 
     def read_topic(self, directory, snippets=True):
         # Read in a topic: code/<category>/<topic>/*.*
-        topic = basename(directory)
-        print(f"Reading topic {self.name}/{topic}")
-        displayname = topic
+        topic = Topic(self, directory)
 
-        # Aliases - first line is display name, too.
-        aliases = [topic]
-        if os.path.exists(f"{directory}/ALIASES.txt"):
-            lines = readfile(f"{directory}/ALIASES.txt", split=True)
-            displayname = lines[0]
-            for line in lines:
-                aliases.append(line)
+        self.topics[topic.name] = topic
 
-        self.topics[topic] = dict(
-            displayname=displayname,
-            aliases=aliases,
-            name=topic,
-        )
+        count = 0
 
         if snippets:
             # Now read in all examples and store in their Language object.
-            for file in glob(f"{directory}/{topic}-*.*"):
+            for file in glob(f"{directory}/{topic.name}-*.*"):
                 topiclang = basename(file)
-                if basename(file) in ['INFO']:
-                    continue
                 _, lang = topiclang.split('-', 1)
-                self.languages[lang].add_snippet(topic, file)
+                with open(file, 'r', encoding="utf-8") as fin:
+                    snippet = fin.read()
+                self.languages[lang].add_snippet(topic.name, snippet)
+                topic.add_snippet(lang, snippet)
+                count += 1
+
+        return count
+
+    def save_snippet(self, language, topic, snippet):
+        filepath = f"{self.filepath}/{topic.name}/{topic.name}-{language.name}.{language.ext}"
+        print(f"Saving snippet to {filepath}")
+        with open(filepath, 'w', encoding="utf-8") as fout:
+            fout.write(snippet)
+
+        # Refresh the in-memory topics+languages.
+        language.add_snippet(topic.name, snippet)
+        topic.add_snippet(language.name, snippet)
+
+    def clear_snippet(self, language, topic):
+        filepath = f"{self.filepath}/{topic.name}/{topic.name}-{language.name}.{language.ext}"
+        print(f"Clearing snippet {filepath}")
+        os.remove(filepath)
+
+        # Refresh the in-memory topics+languages.
+        del language.snippets[topic.name]
+        del topic.snippets[language.name]
 
     def convert_html(self):
         for language in self.languages.values():
@@ -175,7 +239,12 @@ def read_categories(snippets=False):
     categories = dict()
     for path in glob('code/*'):
         if os.path.isdir(path):
-            category = Category(path, snippets=snippets)
+            category = Category(path)
             categories[category.name] = category
+        count = 0
+        for category in categories.values():
+            count += category.read_topics(snippets=snippets)
+        if count > 0:
+            print(f"Category {category.name}: {len(category.languages)} languages, {count} snippets")
 
     return categories

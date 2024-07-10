@@ -1,4 +1,0 @@
-Python
-ext: py
-css: python
-categories: programming

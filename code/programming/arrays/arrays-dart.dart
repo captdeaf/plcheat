@@ -1,69 +1,126 @@
-import 'dart:math';
-
 void main() {
-  // 1. Storing Data
-  List<int> data = [1, 2, 3, 4, 5];
-  print("Original Data: $data");
+  // Storing a collection of elements of the same data type
+  List<int> numbers = [1, 2, 3, 4, 5];
 
-  // 2. Mathematical Operations
-  List<int> squaredData = data.map((x) => x * x).toList();
-  print("Squared Data: $squaredData");
+  // Accessing individual elements via index
+  int elementAtIndex2 = numbers[2];
+  
+  // Iterating over elements using loops
+  for (int i = 0; i < numbers.length; i++) {
+    print(numbers[i]);
+  }
 
-  // 3. Sorting and Searching
-  List<int> sortedData = List.from(data)..sort();
-  print("Sorted Data: $sortedData");
+  // Sorting elements in ascending order
+  numbers.sort();
 
-  int searchValue = 3;
-  int searchIndex = data.indexOf(searchValue);
-  print("Index of $searchValue: $searchIndex");
+  // Searching for a specific element within the array
+  int searchElement = 4;
+  bool isPresent = numbers.contains(searchElement);
 
-  // 4. Data Analysis
-  double meanValue = data.reduce((a, b) => a + b) / data.length;
-  print("Mean Value: $meanValue");
+  // Modifying elements at specific positions
+  numbers[3] = 10;
 
-  int sumValue = data.reduce((a, b) => a + b);
-  print("Sum Value: $sumValue");
+  // Adding elements to the end of the array
+  numbers.add(6);
 
-  // 5. Multidimensional Arrays
+  // Removing elements from the array
+  numbers.remove(2);
+
+  // Merging two arrays into a single array
+  List<int> otherNumbers = [7, 8, 9];
+  List<int> mergedNumbers = [...numbers, ...otherNumbers];
+
+  // Splitting an array into multiple smaller arrays
+  List<List<int>> chunks = [];
+  for (var i = 0; i < numbers.length; i += 2) {
+    chunks.add(numbers.sublist(i, i + 2));
+  }
+
+  // Finding the maximum or minimum element in the array
+  int maxElement = numbers.reduce((current, next) => current > next ? current : next);
+  int minElement = numbers.reduce((current, next) => current < next ? current : next);
+
+  // Filtering elements based on a condition
+  List<int> evenNumbers = numbers.where((element) => element % 2 == 0).toList();
+
+  // Mapping elements to a new value
+  List<int> squaredNumbers = numbers.map((element) => element * element).toList();
+
+  // Reversing the order of elements in the array
+  numbers = numbers.reversed.toList();
+
+  // Calculating the sum or average of array elements
+  int sum = numbers.reduce((value, element) => value + element);
+  double average = sum / numbers.length;
+
+  // Copying elements from one array to another
+  List<int> copiedNumbers = List.from(numbers);
+
+  // Checking if an array contains a certain element
+  bool containsElement = numbers.contains(4);
+
+  // Converting an array to a string
+  String numbersString = numbers.join(", ");
+
+  // Creating multi-dimensional arrays for complex data structures
   List<List<int>> matrix = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
+    [1, 2],
+    [3, 4]
   ];
-  print("Original Matrix:");
-  matrix.forEach((row) => print(row));
 
-  // Transpose the matrix
-  List<List<int>> transposedMatrix = List.generate(
-      matrix[0].length, (i) => List.generate(matrix.length, (j) => matrix[j][i]));
-  print("Transposed Matrix:");
-  transposedMatrix.forEach((row) => print(row));
+  // Implementing binary search algorithm using arrays
+  int binarySearch(List<int> array, int target) {
+    int low = 0;
+    int high = array.length - 1;
 
-  // Example of matrix multiplication (identity matrix)
-  List<List<int>> identityMatrix = [
-    [1, 0, 0],
-    [0, 1, 0],
-    [0, 0, 1]
-  ];
-  List<List<int>> productMatrix = List.generate(matrix.length, (i) => List.generate(identityMatrix[0].length, (j) {
-    int sum = 0;
-    for (int k = 0; k < identityMatrix.length; k++) {
-      sum += matrix[i][k] * identityMatrix[k][j];
+    while (low <= high) {
+      int mid = (low + high) ~/ 2;
+
+      if (array[mid] == target) {
+        return mid;
+      } else if (array[mid] < target) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
     }
-    return sum;
-  }));
-  print("Matrix Product with Identity Matrix:");
-  productMatrix.forEach((row) => print(row));
 
-  // Image Processing (simulated with a simple 2D array)
-  Random random = Random();
-  List<List<double>> image = List.generate(5, (i) => List.generate(5, (j) => random.nextDouble()));
-  print("Original Image:");
-  image.forEach((row) => print(row.map((pixel) => pixel.toStringAsFixed(2)).toList()));
+    return -1; // Element not found
+  }
 
-  // Simple operation on image
-  List<List<double>> brighterImage = image.map((row) => row.map((pixel) => pixel * 1.2).toList()).toList();
-  print("Brighter Image:");
-  brighterImage.forEach((row) => print(row.map((pixel) => pixel.toStringAsFixed(2)).toList()));
+  // Implementing quicksort algorithm using arrays
+  void quickSort(List<int> array, int left, int right) {
+    if (left < right) {
+      int partitionIndex = partition(array, left, right);
+
+      quickSort(array, left, partitionIndex - 1);
+      quickSort(array, partitionIndex + 1, right);
+    }
+  }
+
+  int partition(List<int> array, int left, int right) {
+    int pivot = array[right];
+    int i = left - 1;
+
+    for (int j = left; j < right; j++) {
+      if (array[j] < pivot) {
+        i++;
+        int temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+    }
+
+    int temp = array[i + 1];
+    array[i + 1] = array[right];
+    array[right] = temp;
+
+    return i + 1;
+  }
+
+  // Testing binary search
+  print(binarySearch(numbers, elementAtIndex2));
+
+  // Testing quicksort
+  quickSort(numbers, 0, numbers.length - 1);
 }
-

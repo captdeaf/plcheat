@@ -1,59 +1,82 @@
-fn main() {
-    // 1. Storing Data
-    let data = vec![1, 2, 3, 4, 5];
-    println!("Original Data: {:?}", data);
+// Create an empty vector to store elements of the same data type
+let mut int_array: Vec<i32> = Vec::new();
 
-    // 2. Mathematical Operations
-    let squared_data: Vec<i32> = data.iter().map(|&x| x * x).collect();
-    println!("Squared Data: {:?}", squared_data);
+// Add elements to the end of the array
+int_array.push(5);
+int_array.push(10);
+int_array.push(3);
 
-    // 3. Sorting and Searching
-    let mut sorted_data = data.clone();
-    sorted_data.sort();
-    println!("Sorted Data: {:?}", sorted_data);
+// Access individual elements via index
+let third_element = int_array[2];
 
-    let search_value = 3;
-    if let Some(search_index) = data.iter().position(|&x| x == search_value) {
-        println!("Index of {}: {}", search_value, search_index);
-    }
+// Modify elements at specific positions
+int_array[1] = 20;
 
-    // 4. Data Analysis
-    let sum_value: i32 = data.iter().sum();
-    let mean_value = sum_value as f64 / data.len() as f64;
-    println!("Mean Value: {}", mean_value);
-    println!("Sum Value: {}", sum_value);
-
-    // 5. Multidimensional Arrays
-    let matrix: Vec<Vec<i32>> = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
-    println!("Original Matrix: {:?}", matrix);
-
-    let transposed_matrix: Vec<Vec<i32>> = (0..matrix[0].len())
-        .map(|i| matrix.iter().map(|row| row[i]).collect())
-        .collect();
-    println!("Transposed Matrix: {:?}", transposed_matrix);
-
-    // Example of matrix multiplication (identity matrix)
-    let identity_matrix: Vec<Vec<i32>> = vec![vec![1, 0, 0], vec![0, 1, 0], vec![0, 0, 1]];
-    let product_matrix: Vec<Vec<i32>> = matrix
-        .iter()
-        .map(|row| {
-            row.iter()
-                .enumerate()
-                .map(|(i, &val)| val * identity_matrix[i][i])
-                .collect()
-        })
-        .collect();
-    println!("Matrix Product with Identity Matrix: {:?}", product_matrix);
-
-    // Image Processing (simulated with a simple 2D array)
-    let image: Vec<Vec<f64>> = (0..5).map(|_| (0..5).map(|_| rand::random()).collect()).collect();
-    println!("Original Image: {:?}", image);
-
-    // Simple operation on image
-    let brighter_image: Vec<Vec<f64>> = image
-        .iter()
-        .map(|row| row.iter().map(|&pixel| pixel * 1.2).collect())
-        .collect();
-    println!("Brighter Image: {:?}", brighter_image);
+// Iterate over elements using loops
+for num in &int_array {
+    println!("{}", num);
 }
 
+// Sorting elements in ascending order
+int_array.sort();
+
+// Searching for a specific element within the array
+let index_of_10 = int_array.iter().position(|&x| x == 10);
+
+// Removing elements from the array
+int_array.pop();
+
+// Merging two arrays into a single array
+let mut second_array: Vec<i32> = vec![7, 8];
+int_array.extend(&second_array);
+
+// Splitting an array into multiple smaller arrays
+let split_arrays = int_array.chunks(2).collect::<Vec<_>>();
+
+// Finding the maximum element in the array
+let max_element = int_array.iter().max();
+
+// Filtering elements based on a condition
+let filtered_array: Vec<i32> = int_array.iter().filter(|&x| x > &5).cloned().collect();
+
+// Mapping elements to a new value
+let mapped_array: Vec<i32> = int_array.iter().map(|&x| x * 2).collect();
+
+// Reversing the order of elements in the array
+int_array.reverse();
+
+// Calculating the sum of array elements
+let sum: i32 = int_array.iter().sum();
+
+// Copying elements from one array to another
+let copied_array: Vec<i32> = int_array.clone();
+
+// Checking if an array contains a certain element
+let contains_20 = int_array.contains(&20);
+
+// Converting an array to a string
+let string_representation = int_array.iter().map(|&x| x.to_string()).collect::<Vec<String>>();
+
+// Implementing binary search using sorted array
+int_array.sort();
+let binary_search_result = int_array.binary_search(&10);
+
+// Implementing quicksort
+fn quicksort(mut arr: Vec<i32>) -> Vec<i32> {
+    if arr.len() <= 1 {
+        return arr;
+    }
+    let pivot = arr.pop().unwrap();
+    let (less, greater): (Vec<i32>, Vec<i32>) = arr.into_iter().partition(|&x| x < pivot);
+    let mut sorted = quicksort(less);
+    sorted.push(pivot);
+    sorted.extend(quicksort(greater));
+    sorted
+}
+
+let unsorted_array = vec![6, 3, 9, 12, 1];
+let sorted_array = quicksort(unsorted_array);
+
+fn main() {
+    // Rust code for common array operations
+}

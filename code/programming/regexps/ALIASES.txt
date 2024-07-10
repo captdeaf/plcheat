@@ -1,5 +1,0 @@
-Regular Expressions
-validation
-regexps
-pcre
-matcher

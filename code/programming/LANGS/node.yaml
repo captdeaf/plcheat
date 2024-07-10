@@ -1,4 +1,5 @@
-JavaScript
+displayname: Node.js JavaScript
 ext: js
 css: javascript
+inherits: js
 categories: programming
